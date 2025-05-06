@@ -42,7 +42,26 @@ public class OrbitoStageModel extends GameStageModel {
     private TextElement playerName;
     protected int nbr_column;
     protected int nbr_row;
+    protected int nbr_align;
+    protected boolean[] rotation;
 
+    /**
+     *
+     * @param rotation définit la rotation des anneaux , si true sens horaire , si false antihoraire
+     *                 en partant de l'anneau extérieur
+     */
+    public void setRotation(boolean[] rotation) {
+        this.rotation = rotation;
+    }
+    public boolean[] getRotation() {
+        return rotation;
+    }
+    public int getNbr_align() {
+        return this.nbr_align;
+    }
+    public void setNbr_align(int nbr_align) {
+        this.nbr_align = nbr_align;
+    }
     public void setNbr_column(int nbr_column) {
         this.nbr_column = nbr_column;
     }
@@ -60,8 +79,6 @@ public class OrbitoStageModel extends GameStageModel {
 
     public OrbitoStageModel(String name, Model model) {
         super(name, model);
-        blackPawnsToPlay = 4;
-        redPawnsToPlay = 4;
         setupCallbacks();
     }
 
@@ -145,23 +162,144 @@ public class OrbitoStageModel extends GameStageModel {
 
         });
     }
-
+    //todo: gérer le nombre de billes d'alignement gagnant
     private void computePartyResult() {
         int idWinner = -1;
         // get the empty cell, which should be in 2D at [0,0], [0,2], [1,1], [2,0] or [2,2]
         // i.e. or in 1D at index 0, 2, 4, 6 or 8
-        int i = 0;
-        int nbWhite = 0;
-        int nbBlack = 0;
-        int countWhite = 0;
-        int countBlack = 0;
-        Pawn p = null;
-        int row, col;
-        for (i = 0; i < 9; i+=2) {
-            if (board.isEmptyAt(i / 3, i % 3)) break;
+//        for (int x = 0; x <this.nbr_column; x++){
+//            for (int y = 0; y <this.nbr_row; y++){
+//                Pawn cur_ele=(Pawn)getBoard().getElement(x, y);
+//                if (x ==0 && y ==0){
+//                    //vérification horizontale
+//                    for (int d=0;d<this.nbr_column;d++){
+//                        if (((Pawn)getBoard().getElement(d, y)).getColor()!=cur_ele.getColor()){
+//                            break;
+//                        }
+//                        if (d==nbr_column){
+//                            idWinner=cur_ele.getColor();
+//                        }
+//                    }
+//                    //vérification verticale
+//                    for (int d=0;d<this.nbr_column;d++){
+//                        if (((Pawn)getBoard().getElement(x,d)).getColor()!=cur_ele.getColor()){
+//                            break;
+//                        }
+//                        if (d==nbr_column){
+//                            idWinner=cur_ele.getColor();
+//                        }
+//                    }
+//                    //vérification diagonale
+//                    for (int d=0;d<this.nbr_column;d++){
+//                        if (((Pawn)getBoard().getElement(d,d)).getColor()!=cur_ele.getColor()){
+//                            break;
+//                        }
+//                        if (d==nbr_column){
+//                            idWinner=cur_ele.getColor();
+//                        }
+//                    }
+//                    //------------------------------Bottom Right corner-----------------------------------------
+//                    if (x ==0 && y ==nbr_row-1) {
+//                        //vérification horizontale
+//                        for (int d = 0; d < this.nbr_column; d++) {
+//                            if (((Pawn) getBoard().getElement(x, d)).getColor() != cur_ele.getColor()) {
+//                                break;
+//                            }
+//                            if (d == 0) {
+//                                idWinner = cur_ele.getColor();
+//                            }
+//                        }
+//
+//                        //vérification verticale
+//                        for (int d = nbr_column; d !=0; d--) {
+//                            if (((Pawn) getBoard().getElement(x, d)).getColor() != cur_ele.getColor()) {
+//                                break;
+//                            }
+//                            if (d == nbr_column) {
+//                                idWinner = cur_ele.getColor();
+//                            }
+//                        }
+//                        //vérification diagonale
+//                        for (int d = 0; d < this.nbr_column; d++) {
+//                            if (((Pawn) getBoard().getElement(d, d)).getColor() != cur_ele.getColor()) {
+//                                break;
+//                            }
+//                            if (d == nbr_column) {
+//                                idWinner = cur_ele.getColor();
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+        //vérifie s'il y a des alignements horizontaux
+        for (int y = 0; y < nbr_row; y++) {
+            int x=0;
+            while (x!=nbr_column-1){
+                Pawn cur_ele=(Pawn)getBoard().getElement(x, y);
+                int count=1;
+                x+=1;
+                while (cur_ele.getColor()==((Pawn)getBoard().getElement(x, y)).getColor()){
+                    count++;
+                    x+=1;
+                }
+                //alignement gagnant
+                if (count>=4){
+                    idWinner=cur_ele.getColor();
+                    break;
+                }
+            }
+        }
+
+        for (int y = 0; y < nbr_row; y++) {
+            int x=0;
+            while (x!=nbr_column-1){
+                Pawn cur_ele=(Pawn)getBoard().getElement(y,x);
+                int count=1;
+                x+=1;
+                while (cur_ele.getColor()==((Pawn)getBoard().getElement(y,x)).getColor()){
+                    count++;
+                    x+=1;
+                }
+                //alignement gagnant
+                if (count>=4){
+                    idWinner=cur_ele.getColor();
+                    break;
+                }
+            }
+        }
+//        liste=[[1,1,1,0,1],
+//       [0,0,0,0,0],
+//       [0,0,0,0,0],
+//       [0,0,0,0,0],
+//       [0,0,0,0,0]]
+//        for i in range(len(liste)):
+//        count=1
+//        for l in range(len(liste[i])-1):
+//        current=liste[i][l]
+//        if (liste[i][l+1]==current):
+//        count+=1
+//        else:
+//        count=0
+//
+//        print(count)
+
+        for (int i=0; i<nbr_row; i++) {
+            int count=1;
+            for (int l=0; l<nbr_column-1; l++) {
+                Pawn cur_ele=(Pawn)getBoard().getElement(i,l);
+                if (cur_ele.getColor()==((Pawn)getBoard().getElement(i,l)).getColor()){
+                    count++;
+                }
+                else {
+                    count=0;
+                }
+                if (count>=this.nbr_align){
+                    idWinner=cur_ele.getColor();
+                }
+            }
         }
         // censé s'occuper de décider qui gagne
-        System.out.println("nb black: "+ nbWhite +", nb white: "+ nbBlack +", count black: "+ countWhite +", count red: "+ countBlack +", winner is player "+idWinner);
         // set the winner
         model.setIdWinner(idWinner);
         // stop de the game
