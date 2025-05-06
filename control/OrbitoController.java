@@ -50,8 +50,7 @@ public class OrbitoController extends Controller {
             OrbitoDecider decider = new OrbitoDecider(model,this);
             ActionPlayer play = new ActionPlayer(model, this, decider, null);
             play.start();
-        }
-        else {
+        } else {
             boolean ok = false;
             while (!ok) {
                 System.out.print(p.getName()+ " > ");
@@ -70,7 +69,6 @@ public class OrbitoController extends Controller {
     }
 
     public void endOfTurn() {
-
         model.setNextPlayer();
         // get the new player to display its name
         Player p = model.getCurrentPlayer();
