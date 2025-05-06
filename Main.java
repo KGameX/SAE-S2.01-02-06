@@ -12,6 +12,6 @@ public class Main {
         s.nextLine();
         Model m = new Model();
         View v = new View(m);
-        Controller c=new Controller(m,v);
+        Controller c = new Controller(m,v);
     }
 }
