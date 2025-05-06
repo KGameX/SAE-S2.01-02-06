@@ -1,4 +1,4 @@
-package boardifier.control;
+package control;
 
 import boardifier.control.Decider;
 import boardifier.model.action.ActionList;
