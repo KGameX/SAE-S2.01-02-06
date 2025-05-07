@@ -1,9 +1,9 @@
 package control;
 
+import control.OrbitoDecider;
 import boardifier.control.ActionFactory;
 import boardifier.control.ActionPlayer;
 import boardifier.control.Controller;
-import boardifier.control.OrbitoDecider;
 import boardifier.model.GameElement;
 import boardifier.model.ContainerElement;
 import boardifier.model.Model;
@@ -53,18 +53,17 @@ public class OrbitoController extends Controller {
             play.start();*/
         } else {
             System.out.println("It's your turn.\nDo you want to move an opponent's marble ?");
-            while (!ok) {
-                String ans = "u";
-                try {
-                    while (!"YyNn".contains(ans)) {
-                        System.out.print(p.getName() + " (y/N) > ");
-                        String ans = consoleIn.readLine();
-                    }
-                } catch(IOException e) {}
-            }
+            String ans = "x";
+            try {
+                while (!"YyNn".contains(ans)) {
+                    System.out.print(p.getName() + " (y/N) > ");
+                    ans = consoleIn.readLine();
+                }
+            } catch (IOException e) {/*Something went wrong ?*/}
+
+            boolean ok = false;
 
             if ((ans.equals("Y")) || (ans.equals("y"))) {
-                boolean ok = false;
                 System.out.println("Enter the coordinates of the marble you want to move, and the destination cell.");
                 while (!ok) {
                     System.out.print(p.getName() + " > ");
@@ -73,13 +72,16 @@ public class OrbitoController extends Controller {
                         if (line.length() == 4) {
                             ok = moveMarble(line);
                         }
+
                         if (!ok) {
                             System.out.println("Incorrect coordinates or already occupied cell. retry !");
                         }
-                    } catch (IOException e) {}
+                    } catch (IOException e) {/*Something went wrong ?*/}
                 }
             }
-            
+
+            ok = false;
+
             System.out.println("Now, place a marble in the space of your choice.");
             while (!ok) {
                 System.out.print(p.getName()+ " > ");
@@ -88,10 +90,11 @@ public class OrbitoController extends Controller {
                     if (line.length() == 2) {
                         ok = analyseAndPlay(line);
                     }
+
                     if (!ok) {
                         System.out.println("Incorrect coordinates or already occupied cell. retry !");
                     }
-                } catch(IOException e) {}
+                } catch (IOException e) {/*Something went wrong ?*/}
             }
         }
     }
@@ -102,6 +105,12 @@ public class OrbitoController extends Controller {
         Player p = model.getCurrentPlayer();
         OrbitoStageModel stageModel = (OrbitoStageModel) model.getGameStage();
         stageModel.getPlayerName().setText(p.getName());
+    }
+
+    public void rotateBoard() {
+        OrbitoStageModel stageModel = (OrbitoStageModel) model.getGameStage();
+        boolean rotations = stageModel.getRotation();
+        // Do the rotation
     }
 
     private boolean moveMarble(String line) {
@@ -148,7 +157,7 @@ public class OrbitoController extends Controller {
         int row = (int) (line.charAt(1) - '1');
 
         if ((row < 0) || (row > nbr_rows - 1)) return false;
-        if ((col < 0)||(col > nbr_cols - 1)) return false;
+        if ((col < 0) || (col > nbr_cols - 1)) return false;
 
         ContainerElement pot = null;
         if (model.getIdPlayer() == 0) {
