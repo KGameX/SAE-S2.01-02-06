@@ -52,14 +52,15 @@ public class OrbitoStageFactory extends StageElementsFactory {
             NB: their coordinates are by default 0,0 but since they are put
             within the pots, their real coordinates will be computed by the view
          */
-        Pawn[] WhiteMarbles = new Pawn[4];
-        for(int i=0;i<4;i++) {
+        int nbr_billes=(nbr_column*nbr_row)/2;
+        Pawn[] WhiteMarbles = new Pawn[nbr_billes];
+        for(int i=0;i<nbr_billes;i++) {
             WhiteMarbles[i] = new Pawn(i + 1, Pawn.PAWN_BLACK, stageModel);
         }
         // assign the black pawns to the game stage model
         stageModel.setWhiteMarbles(WhiteMarbles);
-        Pawn[] BlackMarbles = new Pawn[4];
-        for(int i=0;i<4;i++) {
+        Pawn[] BlackMarbles = new Pawn[nbr_billes];
+        for(int i=0;i<nbr_billes;i++) {
             BlackMarbles[i] = new Pawn(i + 1, Pawn.PAWN_RED, stageModel);
         }
         // assign the black pawns to the game stage model
