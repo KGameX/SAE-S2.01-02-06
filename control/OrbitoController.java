@@ -12,6 +12,7 @@ import boardifier.model.action.ActionList;
 import boardifier.view.View;
 import model.OrbitoBoard;
 import model.OrbitoStageModel;
+import model.Pawn;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,24 +47,51 @@ public class OrbitoController extends Controller {
         // get the new player
         Player p = model.getCurrentPlayer();
         if (p.getType() == Player.COMPUTER) {
-            System.out.println("COMPUTER PLAYS");
+            System.out.println("COMPUTER PLAYS");/*
             OrbitoDecider decider = new OrbitoDecider(model,this);
             ActionPlayer play = new ActionPlayer(model, this, decider, null);
-            play.start();
+            play.start();*/
         } else {
-            boolean ok = false;
+            System.out.println("It's your turn.\nDo you want to move an opponent's marble ?");
+            while (!ok) {
+                String ans = "u";
+                try {
+                    while (!"YyNn".contains(ans)) {
+                        System.out.print(p.getName() + " (y/N) > ");
+                        String ans = consoleIn.readLine();
+                    }
+                } catch(IOException e) {}
+            }
+
+            if ((ans.equals("Y")) || (ans.equals("y"))) {
+                boolean ok = false;
+                System.out.println("Enter the coordinates of the marble you want to move, and the destination cell.");
+                while (!ok) {
+                    System.out.print(p.getName() + " > ");
+                    try {
+                        String line = consoleIn.readLine();
+                        if (line.length() == 4) {
+                            ok = moveMarble(line);
+                        }
+                        if (!ok) {
+                            System.out.println("Incorrect coordinates or already occupied cell. retry !");
+                        }
+                    } catch (IOException e) {}
+                }
+            }
+            
+            System.out.println("Now, place a marble in the space of your choice.");
             while (!ok) {
                 System.out.print(p.getName()+ " > ");
                 try {
                     String line = consoleIn.readLine();
-                    if (line.length() == 3) {
+                    if (line.length() == 2) {
                         ok = analyseAndPlay(line);
                     }
                     if (!ok) {
-                        System.out.println("incorrect instruction. retry !");
+                        System.out.println("Incorrect coordinates or already occupied cell. retry !");
                     }
-                }
-                catch(IOException e) {}
+                } catch(IOException e) {}
             }
         }
     }
@@ -76,6 +104,40 @@ public class OrbitoController extends Controller {
         stageModel.getPlayerName().setText(p.getName());
     }
 
+    private boolean moveMarble(String line) {
+        OrbitoStageModel gameStage = (OrbitoStageModel) model.getGameStage();
+        OrbitoBoard board = gameStage.getBoard();
+        int nbr_cols = board.getNbCols();
+        int nbr_rows = board.getNbRows();
+
+        int colSrc = (int) (line.charAt(0) - 'A');
+        int rowSrc = (int) (line.charAt(1) - '1');
+        int colDest = (int) (line.charAt(2) - 'A');
+        int rowDest = (int) (line.charAt(3) - '1');
+
+        if ((colSrc < 0) || (colSrc > nbr_cols - 1)) return false;
+        if ((rowSrc < 0) || (rowSrc > nbr_rows - 1)) return false;
+        if ((colDest < 0) || (colDest > nbr_cols - 1)) return false;
+        if ((rowDest < 0) || (rowDest > nbr_rows - 1)) return false;
+
+        Pawn pawn = (Pawn) board.getElement(colSrc, rowSrc);
+        if (pawn == null) return false;
+        if (board.isElementAt(rowDest, colDest)) return false;
+
+        int playerID = model.getIdPlayer();
+        if (playerID == pawn.getColor()) return false;
+
+        // Checks if the move is legal by calculating the length between the two cells.
+        if (Math.sqrt(Math.pow(colDest - colSrc, 2) + Math.pow(rowDest - rowSrc, 2)) != 1) return false;
+
+        ActionList actions = ActionFactory.generateMoveWithinContainer(model, pawn, rowDest, colDest);
+        actions.setDoEndOfTurn(false); // after playing this action list, it won't be the end of turn for current player.
+        ActionPlayer play = new ActionPlayer(model, this, actions);
+        play.start();
+
+        return true;
+    }
+
     private boolean analyseAndPlay(String line) {
         OrbitoStageModel gameStage = (OrbitoStageModel) model.getGameStage();
         OrbitoBoard board = gameStage.getBoard();
@@ -85,23 +147,29 @@ public class OrbitoController extends Controller {
         int col = (int) (line.charAt(0) - 'A');
         int row = (int) (line.charAt(1) - '1');
 
-        if ((row<0)||(row>nbr_rows-1)) return false;
-        if ((col<0)||(col>nbr_cols-1)) return false;
+        if ((row < 0) || (row > nbr_rows - 1)) return false;
+        if ((col < 0)||(col > nbr_cols - 1)) return false;
 
         ContainerElement pot = null;
         if (model.getIdPlayer() == 0) {
             pot = gameStage.getWhitePot();
-        }
-        else {
+        } else {
             pot = gameStage.getBlackPot();
         }
-        GameElement pawn = pot.getElement(1,0);
-        if (!gameStage.getBoard().canReachCell(row,col)) return false;
 
-        ActionList actions = ActionFactory.generatePutInContainer(model, pawn, "orbitoboard", row, col);
+        if (board.isElementAt(row, col)) return false;
+
+        int pawnIndex = 0;
+        while (pot.isEmptyAt(pawnIndex, 0)) {
+            pawnIndex++;
+        }
+        Pawn pawn = (Pawn) pot.getElement(pawnIndex, 0);
+
+        ActionList actions = ActionFactory.generatePutInContainer(model, pawn, "Orbitoboard", row, col);
         actions.setDoEndOfTurn(true); // after playing this action list, it will be the end of turn for current player.
         ActionPlayer play = new ActionPlayer(model, this, actions);
         play.start();
+
         return true;
     }
 }
