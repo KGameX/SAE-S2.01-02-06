@@ -2,6 +2,8 @@ package model;
 
 import boardifier.model.*;
 
+import java.util.ArrayList;
+
 /**
  * HoleStageModel defines the model for the single stage in "The Hole". Indeed,
  * there are no levels in this game: a party starts and when it's done, the game is also done.
@@ -162,145 +164,51 @@ public class OrbitoStageModel extends GameStageModel {
 
         });
     }
+    /*
+    étend une matrice de 1 en y et x , filler détermine ce qui est utilisé pour remplir l'espace créé
+     */
+    private ArrayList<ArrayList> extend_matrix(){
+        int filler=7;
+        int taille=getBoard().getNbCols();
+        ArrayList<ArrayList> etendue=new ArrayList<>();
+        ArrayList<Integer> debut=new ArrayList<>();
+        ArrayList<Integer> fin=new ArrayList<>();
+
+        for (int s=0;s<taille+2;s++){
+            debut.add(filler);
+        }
+        etendue.add(debut);
+
+        for (int i=0;i<taille;i++){
+            ArrayList<Integer> ajout=new ArrayList<>();
+            ajout.add(filler);
+            for (int x=0;x<taille;x++){
+               getBoard().getElement(i,x);
+                // remplacer par original.get(i).get(x)
+            }
+            ajout.add(filler);
+            etendue.add(ajout);
+        }
+
+        for (int s=0;s<taille+2;s++){
+            fin.add(filler);
+        }
+        etendue.add(fin);
+
+        //affiche
+        for (int y=0;y<etendue.size();y++){
+            ArrayList<Integer> ligne=etendue.get(y);
+            for (int x=0;x<ligne.size();x++){
+                System.out.print(ligne.get(x));
+            }
+            System.out.println();
+        }
+        return etendue;
+    }
     //todo: gérer le nombre de billes d'alignement gagnant
     private void computePartyResult() {
         int idWinner = -1;
-        // get the empty cell, which should be in 2D at [0,0], [0,2], [1,1], [2,0] or [2,2]
-        // i.e. or in 1D at index 0, 2, 4, 6 or 8
-//        for (int x = 0; x <this.nbr_column; x++){
-//            for (int y = 0; y <this.nbr_row; y++){
-//                Pawn cur_ele=(Pawn)getBoard().getElement(x, y);
-//                if (x ==0 && y ==0){
-//                    //vérification horizontale
-//                    for (int d=0;d<this.nbr_column;d++){
-//                        if (((Pawn)getBoard().getElement(d, y)).getColor()!=cur_ele.getColor()){
-//                            break;
-//                        }
-//                        if (d==nbr_column){
-//                            idWinner=cur_ele.getColor();
-//                        }
-//                    }
-//                    //vérification verticale
-//                    for (int d=0;d<this.nbr_column;d++){
-//                        if (((Pawn)getBoard().getElement(x,d)).getColor()!=cur_ele.getColor()){
-//                            break;
-//                        }
-//                        if (d==nbr_column){
-//                            idWinner=cur_ele.getColor();
-//                        }
-//                    }
-//                    //vérification diagonale
-//                    for (int d=0;d<this.nbr_column;d++){
-//                        if (((Pawn)getBoard().getElement(d,d)).getColor()!=cur_ele.getColor()){
-//                            break;
-//                        }
-//                        if (d==nbr_column){
-//                            idWinner=cur_ele.getColor();
-//                        }
-//                    }
-//                    //------------------------------Bottom Right corner-----------------------------------------
-//                    if (x ==0 && y ==nbr_row-1) {
-//                        //vérification horizontale
-//                        for (int d = 0; d < this.nbr_column; d++) {
-//                            if (((Pawn) getBoard().getElement(x, d)).getColor() != cur_ele.getColor()) {
-//                                break;
-//                            }
-//                            if (d == 0) {
-//                                idWinner = cur_ele.getColor();
-//                            }
-//                        }
-//
-//                        //vérification verticale
-//                        for (int d = nbr_column; d !=0; d--) {
-//                            if (((Pawn) getBoard().getElement(x, d)).getColor() != cur_ele.getColor()) {
-//                                break;
-//                            }
-//                            if (d == nbr_column) {
-//                                idWinner = cur_ele.getColor();
-//                            }
-//                        }
-//                        //vérification diagonale
-//                        for (int d = 0; d < this.nbr_column; d++) {
-//                            if (((Pawn) getBoard().getElement(d, d)).getColor() != cur_ele.getColor()) {
-//                                break;
-//                            }
-//                            if (d == nbr_column) {
-//                                idWinner = cur_ele.getColor();
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-        //vérifie s'il y a des alignements horizontaux
-        for (int y = 0; y < nbr_row; y++) {
-            int x=0;
-            while (x!=nbr_column-1){
-                Pawn cur_ele=(Pawn)getBoard().getElement(x, y);
-                int count=1;
-                x+=1;
-                while (cur_ele.getColor()==((Pawn)getBoard().getElement(x, y)).getColor()){
-                    count++;
-                    x+=1;
-                }
-                //alignement gagnant
-                if (count>=4){
-                    idWinner=cur_ele.getColor();
-                    break;
-                }
-            }
-        }
-
-        for (int y = 0; y < nbr_row; y++) {
-            int x=0;
-            while (x!=nbr_column-1){
-                Pawn cur_ele=(Pawn)getBoard().getElement(y,x);
-                int count=1;
-                x+=1;
-                while (cur_ele.getColor()==((Pawn)getBoard().getElement(y,x)).getColor()){
-                    count++;
-                    x+=1;
-                }
-                //alignement gagnant
-                if (count>=4){
-                    idWinner=cur_ele.getColor();
-                    break;
-                }
-            }
-        }
-//        liste=[[1,1,1,0,1],
-//       [0,0,0,0,0],
-//       [0,0,0,0,0],
-//       [0,0,0,0,0],
-//       [0,0,0,0,0]]
-//        for i in range(len(liste)):
-//        count=1
-//        for l in range(len(liste[i])-1):
-//        current=liste[i][l]
-//        if (liste[i][l+1]==current):
-//        count+=1
-//        else:
-//        count=0
-//
-//        print(count)
-
-        for (int i=0; i<nbr_row; i++) {
-            int count=1;
-            for (int l=0; l<nbr_column-1; l++) {
-                Pawn cur_ele=(Pawn)getBoard().getElement(i,l);
-                if (cur_ele.getColor()==((Pawn)getBoard().getElement(i,l)).getColor()){
-                    count++;
-                }
-                else {
-                    count=0;
-                }
-                if (count>=this.nbr_align){
-                    idWinner=cur_ele.getColor();
-                }
-            }
-        }
-        // censé s'occuper de décider qui gagne
-        // set the winner
+        //((Pawn)getBoard().getElement(x, y)).getColor()
         model.setIdWinner(idWinner);
         // stop de the game
         model.stopStage();
