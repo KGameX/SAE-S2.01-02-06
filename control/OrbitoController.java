@@ -18,6 +18,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import java.util.*;
+
 public class OrbitoController extends Controller {
 
     BufferedReader consoleIn;
@@ -109,9 +111,53 @@ public class OrbitoController extends Controller {
 
     public void rotateBoard() {
         OrbitoStageModel stageModel = (OrbitoStageModel) model.getGameStage();
-        boolean rotations = stageModel.getRotation();
-        // Do the rotation
+        OrbitoBoard board = stageModel.getBoard();
+        boolean[] rotations = stageModel.getRotation();
+        int n = board.getNbRows();
 
+        int rings = rotations.length;
+        for (int ring = 0; ring < rings; ring++) {
+            int start = ring;
+            int end = n - 1 - ring;
+            if (start >= end) break;
+
+            List<Pawn> elements = new ArrayList<>();
+
+            // Haut
+            for (int col = start; col <= end; col++)
+                elements.add((Pawn) board.getElement(start, col));
+            // Droite
+            for (int row = start + 1; row < end; row++)
+                elements.add((Pawn) board.getElement(row, end));
+            // Bas
+            for (int col = end; col >= start; col--)
+                elements.add((Pawn) board.getElement(end, col));
+            // Gauche
+            for (int row = end - 1; row > start; row--)
+                elements.add((Pawn) board.getElement(row, start));
+
+            // Rotation
+            if (rotations[ring]) {
+                elements.add(0, elements.remove(elements.size() - 1));
+            } else {
+                elements.add(elements.remove(0));
+            }
+
+            int idx = 0;
+            // Réinjecter les éléments dans l'anneau
+            // Haut
+            for (int col = start; col <= end; col++)
+                board.setElement(start, col, elements.get(idx++));
+            // Droite
+            for (int row = start + 1; row < end; row++)
+                board.setElement(row, end, elements.get(idx++));
+            // Bas
+            for (int col = end; col >= start; col--)
+                board.setElement(end, col, elements.get(idx++));
+            // Gauche
+            for (int row = end - 1; row > start; row--)
+                board.setElement(row, start, elements.get(idx++));
+        }
     }
 
     private boolean moveMarble(String line) {
