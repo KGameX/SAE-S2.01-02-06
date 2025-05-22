@@ -102,6 +102,7 @@ public class OrbitoController extends Controller {
     }
 
     public void endOfTurn() {
+        rotateBoard();
         model.setNextPlayer();
         // get the new player to display its name
         Player p = model.getCurrentPlayer();
