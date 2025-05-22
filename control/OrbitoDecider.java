@@ -25,7 +25,7 @@ public class OrbitoDecider extends Decider {
         int rowDest = 0;
         int colDest = 0;
 
-        ActionList actions = ActionFactory.generatePutInContainer(model, pawn, "orbitoboard", rowDest, colDest);
+        actions = ActionFactory.generatePutInContainer(model, pawn, "orbitoboard", rowDest, colDest);
         actions.setDoEndOfTurn(true);
         return actions;
     }

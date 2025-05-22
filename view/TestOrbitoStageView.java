@@ -1,5 +1,10 @@
 package view;
 
-public class TestOrbitoStageView {
+import org.junit.jupiter.api.Test;
 
+public class TestOrbitoStageView {
+    @Test
+    public void testCreateLooks() {
+
+    }
 }

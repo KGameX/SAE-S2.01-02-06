@@ -1,5 +1,8 @@
 package model;
 
-public class TestOrbitoBoard {
+import org.junit.jupiter.api.Test;
 
+public class TestOrbitoBoard {
+    @Test
+    public void test() {}
 }
