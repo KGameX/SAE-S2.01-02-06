@@ -111,6 +111,7 @@ public class OrbitoController extends Controller {
         OrbitoStageModel stageModel = (OrbitoStageModel) model.getGameStage();
         boolean rotations = stageModel.getRotation();
         // Do the rotation
+
     }
 
     private boolean moveMarble(String line) {

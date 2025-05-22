@@ -210,7 +210,7 @@ public class OrbitoStageModel extends GameStageModel {
         int idWinner = -1;
         //((Pawn)getBoard().getElement(x, y)).getColor()
         model.setIdWinner(idWinner);
-        // stop de the game
+        // stop the game
         model.stopStage();
     }
 
