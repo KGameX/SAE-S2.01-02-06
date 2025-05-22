@@ -148,16 +148,16 @@ public class OrbitoController extends Controller {
             // Réinjecter les éléments dans l'anneau
             // Haut
             for (int col = start; col <= end; col++)
-                board.setElement(start, col, elements.get(idx++));
+                board.addElement(elements.get(idx++), start, col);
             // Droite
             for (int row = start + 1; row < end; row++)
-                board.setElement(row, end, elements.get(idx++));
+                board.addElement(elements.get(idx++), row, end);
             // Bas
             for (int col = end; col >= start; col--)
-                board.setElement(end, col, elements.get(idx++));
+                board.addElement(elements.get(idx++), end, col);
             // Gauche
             for (int row = end - 1; row > start; row--)
-                board.setElement(row, start, elements.get(idx++));
+                board.addElement(elements.get(idx++), row, start);
         }
     }
 
