@@ -268,7 +268,7 @@ public class OrbitoStageModel extends GameStageModel {
                             tx+=v.get(1);
                             new_current=arr.get(tx).get(ty);
                             if (nbr==nbr_aligner){
-                                
+                                idWinner=Integer.valueOf(current);
                             }
                         }
                     }
