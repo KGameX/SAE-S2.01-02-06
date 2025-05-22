@@ -24,10 +24,10 @@ public class Main {
             model.addComputerPlayer("computer2");
         }
 
-        StageFactory.registerModelAndView("hole", "model.HoleStageModel", "view.HoleStageView");
+        StageFactory.registerModelAndView("orbito++", "model.OrbitoStageModel", "view.OrbitoStageView");
         View orbitoView = new View(model);
         OrbitoController control = new OrbitoController(model,orbitoView);
-        control.setFirstStageName("hole");
+        control.setFirstStageName("orbito++");
         try {
             control.startGame();
             control.stageLoop();
