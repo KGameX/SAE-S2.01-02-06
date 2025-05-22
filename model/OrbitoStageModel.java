@@ -167,12 +167,12 @@ public class OrbitoStageModel extends GameStageModel {
     /*
     étend une matrice de 1 en y et x , filler détermine ce qui est utilisé pour remplir l'espace créé
      */
-    private ArrayList<ArrayList> extend_matrix(){
-        int filler=7;
+    private ArrayList<ArrayList<Character>> extend_matrix(){
+        char filler='X';
         int taille=getBoard().getNbCols();
-        ArrayList<ArrayList> etendue=new ArrayList<>();
-        ArrayList<Integer> debut=new ArrayList<>();
-        ArrayList<Integer> fin=new ArrayList<>();
+        ArrayList<ArrayList<Character>> etendue=new ArrayList<>();
+        ArrayList<Character> debut=new ArrayList<>();
+        ArrayList<Character> fin=new ArrayList<>();
 
         for (int s=0;s<taille+2;s++){
             debut.add(filler);
@@ -180,7 +180,7 @@ public class OrbitoStageModel extends GameStageModel {
         etendue.add(debut);
 
         for (int i=0;i<taille;i++){
-            ArrayList<Integer> ajout=new ArrayList<>();
+            ArrayList<Character> ajout=new ArrayList<>();
             ajout.add(filler);
             for (int x=0;x<taille;x++){
                getBoard().getElement(i,x);
@@ -191,23 +191,90 @@ public class OrbitoStageModel extends GameStageModel {
         }
 
         for (int s=0;s<taille+2;s++){
-            fin.add(filler);
+            fin.add('X');
         }
         etendue.add(fin);
 
-        //affiche
-        for (int y=0;y<etendue.size();y++){
-            ArrayList<Integer> ligne=etendue.get(y);
-            for (int x=0;x<ligne.size();x++){
-                System.out.print(ligne.get(x));
-            }
-            System.out.println();
-        }
         return etendue;
     }
     //todo: gérer le nombre de billes d'alignement gagnant
     private void computePartyResult() {
         int idWinner = -1;
+        ArrayList<ArrayList<Character>> arr=this.extend_matrix();
+        int nbr_aligner=5;
+        for (int y=1;y<arr.size()-1;y++){
+            for (int x=1;x<arr.get(y).size()-1;x++){
+                ArrayList<ArrayList> vecteur=new ArrayList<>();
+                String current=arr.get(y).get(x).toString();
+                ArrayList<Integer> temp;
+                //bas droite
+                if (current.equals(arr.get(y+1).get(x+1))) {
+                    temp=new ArrayList<>();
+                    temp.add(1,1);
+                    vecteur.add(temp);
+                }
+                // bas gauche
+                if (current.equals(arr.get(y+1).get(x-1))) {
+                    temp=new ArrayList<>();
+                    temp.add(1,-1);
+                    vecteur.add(temp);
+                }
+                //haut droite
+                if (current.equals(arr.get(y-1).get(x+1))) {
+                    temp=new ArrayList<>();
+                    temp.add(-1,1);
+                    vecteur.add(temp);
+                }
+                //haut gauche
+                if (current.equals(arr.get(y-1).get(x-1))) {
+                    temp=new ArrayList<>();
+                    temp.add(-1,-1);
+                    vecteur.add(temp);
+                }
+                //haut
+                if (current.equals(arr.get(y-1).get(x))) {
+                    temp=new ArrayList<>();
+                    temp.add(-1,0);
+                    vecteur.add(temp);
+                }
+                //bas
+                if (current.equals(arr.get(y+1).get(x))) {
+                    temp=new ArrayList<>();
+                    temp.add(1,0);
+                    vecteur.add(temp);
+                }
+                //droite
+                if (current.equals(arr.get(y).get(x+1))) {
+                    temp=new ArrayList<>();
+                    temp.add(0,1);
+                    vecteur.add(temp);
+                }
+                //gauche
+                if (current.equals(arr.get(y).get(x-1))) {
+                    temp=new ArrayList<>();
+                    temp.add(0,-1);
+                    vecteur.add(temp);
+                }
+                for (int vi=0;vi<vecteur.size();vi++){
+                    ArrayList<Integer> v=vecteur.get(vi);
+                    int nbr=2;
+                    int tx=x+v.get(1);
+                    int ty=y+v.get(0);
+                    char new_current=arr.get(tx).get(ty);
+                    for (int r=0;r<nbr_aligner-2;r++){
+                        if ((((ty+v.get(0)<6) && (tx+v.get(1)<6) && (tx+v.get(1)>=0) && (ty+v.get(0)>=0) && arr.get(ty+v.get(0)).get(tx+v.get(1)).equals(current)))){
+                            nbr++;
+                            ty+=v.get(0);
+                            tx+=v.get(1);
+                            new_current=arr.get(tx).get(ty);
+                            if (nbr==nbr_aligner){
+                                
+                            }
+                        }
+                    }
+                }
+            }
+        }
         //((Pawn)getBoard().getElement(x, y)).getColor()
         model.setIdWinner(idWinner);
         // stop the game
