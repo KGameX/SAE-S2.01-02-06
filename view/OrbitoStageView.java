@@ -29,7 +29,7 @@ public class OrbitoStageView extends GameStageView {
         addLook(new ClassicBoardLook(this.taille,this.taille, model.getBoard(),1, 1, true));
         addLook(new BlackMarblePotLook(model.getBlackPot()));
         addLook(new WhiteMarblePotLook(model.getWhitePot()));
-        for(int i = 0; i < 4; i++) {
+        for(int i = 0; i < 8; i++) {
             addLook(new MarbleLook(model.getBlackMarbles()[i]));
             addLook(new MarbleLook(model.getWhiteMarbles()[i]));
         }

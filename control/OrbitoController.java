@@ -31,6 +31,7 @@ public class OrbitoController extends Controller {
     }
 
     /**
+     * 
      * Defines what to do within the single stage of the single party
      * It is pretty straight forward to write :
      */
@@ -49,10 +50,10 @@ public class OrbitoController extends Controller {
         // get the new player
         Player p = model.getCurrentPlayer();
         if (p.getType() == Player.COMPUTER) {
-            System.out.println("COMPUTER PLAYS");/*
+            System.out.println("COMPUTER PLAYS");
             OrbitoDecider decider = new OrbitoDecider(model,this);
             ActionPlayer play = new ActionPlayer(model, this, decider, null);
-            play.start();*/
+            play.start();
         } else {
             System.out.println("It's your turn.\nDo you want to move an opponent's marble ?");
             String ans = "x";
