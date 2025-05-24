@@ -26,28 +26,39 @@ public class OrbitoBoard extends ContainerElement {
             }
         }
     }
-
+    public void setNbrRow(int nbr_row) {
+        this.nbr_row = nbr_row;
+    }
+    public void setNbrCol(int nbr_col) {
+        this.nbr_col = nbr_col;
+    }
+    public int GetNbrRow() {
+        return this.nbr_row;
+    }
+    public int GetNbrCol() {
+        return this.nbr_col;
+    }
     public List<Point> computeValidCells(int x, int y) {
         List<Point> lst = new ArrayList<>();
         Pawn p = null;
         // if the grid is empty, is it the first turn and thus, all cells are valid
         if (isEmpty()) {
             // i are rows
-            for(int i=0;i<this.nbCols;i++) {
+            for(int i=0;i<this.GetNbrCol();i++) {
                 // j are cols
-                for (int j = 0; j < this.nbRows; j++) {
+                for (int j = 0; j < this.GetNbrRow(); j++) {
                     // cols is in x direction and rows are in y direction, so create a point in (j,i)
                     lst.add(new Point(j,i));
                 }
             }
             return lst;
         }
-        if (x==this.nbCols-1){
+        if (x==this.GetNbrCol()-1){
             if (isEmptyAt(x-1,y)){
                 lst.add(new Point(x-1,y));
             }
         }
-        if (y==this.nbRows-1){
+        if (y==this.GetNbrRow()-1){
             if (isEmptyAt(x,y-1)){
                 lst.add(new Point(x,y-1));
             }
