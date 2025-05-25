@@ -162,7 +162,7 @@ public class OrbitoController extends Controller {
         }
     }
 
-    private boolean moveMarble(String line) {
+    public boolean moveMarble(String line) {
         OrbitoStageModel gameStage = (OrbitoStageModel) model.getGameStage();
         OrbitoBoard board = gameStage.getBoard();
         int nbr_cols = board.getNbCols();
