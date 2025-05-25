@@ -24,10 +24,12 @@ public class OrbitoController extends Controller {
 
     BufferedReader consoleIn;
     boolean firstPlayer;
+    int computerMode;
 
-    public OrbitoController(Model model, View view) {
+    public OrbitoController(Model model, View view, int computerMode) {
         super(model, view);
         firstPlayer = true;
+        this.computerMode = computerMode;
     }
 
     /**
@@ -51,7 +53,7 @@ public class OrbitoController extends Controller {
         Player p = model.getCurrentPlayer();
         if (p.getType() == Player.COMPUTER) {
             System.out.println("COMPUTER PLAYS");
-            OrbitoDecider decider = new OrbitoDecider(model,this);
+            OrbitoDecider decider = new OrbitoDecider(model,this, computerMode);
             ActionPlayer play = new ActionPlayer(model, this, decider, null);
             play.start();
         } else {

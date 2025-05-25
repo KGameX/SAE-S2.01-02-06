@@ -14,13 +14,20 @@ import java.awt.*;
 import java.util.List;
 
 public class OrbitoDecider extends Decider {
-    
-    public OrbitoDecider(Model model, Controller control) {
+    private int computerMode;
+
+    public OrbitoDecider(Model model, Controller control, int computerMode) {
         super(model, control);
+        this.computerMode = computerMode;
     }
 
     @Override
     public ActionList decide() {
+        if (computerMode == 0) {
+            return decideGreedy();
+        } else if (computerMode == 1) {
+            return decideCenterControl();
+        }
         return decideCenterControl();
     }
 
