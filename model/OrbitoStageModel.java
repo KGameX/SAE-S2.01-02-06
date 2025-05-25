@@ -148,6 +148,7 @@ public class OrbitoStageModel extends GameStageModel {
         addElement(playerName);
     }
 
+
     private void setupCallbacks() {
         onPutInContainer( (element, gridDest, rowDest, colDest) -> {
             // just check when pawns are put in 3x3 board
