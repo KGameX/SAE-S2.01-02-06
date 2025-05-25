@@ -49,10 +49,14 @@ public class TestOrbitoBoard {
         Assertions.assertEquals(lst,board.computeValidCells(1,0));
 
         // Test setValidCells
+        Mockito.when(board.canReachCell(anyInt(), anyInt())).thenCallRealMethod();
         List<Point> nlst = new ArrayList<>();
         nlst.add(new Point(0,0));
         nlst.add(new Point(1,1));
-        //Mockito.when(board.computeValidCells(anyInt(),anyInt())).thenReturn(nlst);
-        //board.setValidCells(0,1);
+        Mockito.doReturn(nlst).when(board).computeValidCells(anyInt(), anyInt());
+        board.setValidCells(0,1);
+        //Assertions.assertEquals(lst,board.canReachCell(0,1));
+
+
     }
 }
