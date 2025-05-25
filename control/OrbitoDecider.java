@@ -12,11 +12,8 @@ import model.OrbitoStageModel;
 import model.Pawn;
 import java.awt.*;
 import java.util.List;
-import java.util.Calendar;
-import java.util.Random;
 
 public class OrbitoDecider extends Decider {
-    private static final Random loto = new Random(Calendar.getInstance().getTimeInMillis());
     
     public OrbitoDecider(Model model, Controller control) {
         super(model, control);
@@ -24,36 +21,66 @@ public class OrbitoDecider extends Decider {
 
     @Override
     public ActionList decide() {
+        return decideCenterControl();
+    }
+
+    public ActionList decideCenterControl() {
         ActionList actions = null;
         OrbitoStageModel stage = (OrbitoStageModel) model.getGameStage();
         OrbitoBoard board = stage.getBoard();
-        OrbitoMarblePot pot = null;
-        GameElement pawn = null;
-        int rowDest = 0;
-        int colDest = 0;
-        
-        if (model.getIdPlayer() == Pawn.PAWN_BLACK) {
-            pot = stage.getBlackPot();
-        } else {
-            pot = stage.getWhitePot();
-        }
+        OrbitoMarblePot pot = (model.getIdPlayer() == Pawn.PAWN_BLACK) ? stage.getBlackPot() : stage.getWhitePot();
+        GameElement bestPawn = null;
+        int bestRow = 0, bestCol = 0;
+        double minDist = Double.MAX_VALUE;
 
-        for (int i=0; i<8; i++) {
-            Pawn p = (Pawn)pot.getElement(i,0);
+        int centerRow = board.GetNbrRow() / 2;
+        int centerCol = board.GetNbrCol() / 2;
+
+        for (int i = 0; i < 8; i++) {
+            Pawn p = (Pawn) pot.getElement(i, 0);
             if (p != null) {
                 List<Point> valid = board.computeValidCells(p.getNumber(), 0);
-                if (valid.size() != 0) {
-                    int id = loto.nextInt(valid.size());
-                    pawn = p;
-                    rowDest = valid.get(id).y;
-                    colDest = valid.get(id).x;
-                    break;
+                for (Point pt : valid) {
+                    double dist = Math.hypot(pt.x - centerCol, pt.y - centerRow);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        bestPawn = p;
+                        bestRow = pt.y;
+                        bestCol = pt.x;
+                    }
                 }
             }
         }
+        if (bestPawn == null) throw new IllegalStateException("Aucun coup possible");
+        actions = ActionFactory.generatePutInContainer(model, bestPawn, "orbitoboard", bestRow, bestCol);
+        actions.setDoEndOfTurn(true);
+        return actions;
+    }
 
-        assert pawn != null;
-        actions = ActionFactory.generatePutInContainer(model, pawn, "orbitoboard", rowDest, colDest);
+    public ActionList decideGreedy() {
+        ActionList actions = null;
+        OrbitoStageModel stage = (OrbitoStageModel) model.getGameStage();
+        OrbitoBoard board = stage.getBoard();
+        OrbitoMarblePot pot = (model.getIdPlayer() == Pawn.PAWN_BLACK) ? stage.getBlackPot() : stage.getWhitePot();
+        GameElement bestPawn = null;
+        int bestRow = 0, bestCol = 0, maxChoices = -1;
+
+        for (int i = 0; i < 8; i++) {
+            Pawn p = (Pawn) pot.getElement(i, 0);
+            if (p != null) {
+                List<Point> valid = board.computeValidCells(p.getNumber(), 0);
+                if (valid.size() > maxChoices) {
+                    maxChoices = valid.size();
+                    if (!valid.isEmpty()) {
+                        bestPawn = p;
+                        bestRow = valid.get(0).y;
+                        bestCol = valid.get(0).x;
+                    }
+                }
+            }
+        }
+        if (bestPawn == null) throw new IllegalStateException("Aucun coup possible");
+        actions = ActionFactory.generatePutInContainer(model, bestPawn, "orbitoboard", bestRow, bestCol);
         actions.setDoEndOfTurn(true);
         return actions;
     }
