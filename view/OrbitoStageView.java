@@ -10,20 +10,12 @@ import java.util.Scanner;
 
 public class OrbitoStageView extends GameStageView {
     private int taille;
-    public OrbitoStageView(String name, GameStageModel gameStageModel,int taille) {
+    public OrbitoStageView(String name, GameStageModel gameStageModel) {
         super(name,gameStageModel);
-        this.taille = taille;
     }
     @Override
     public void createLooks() {
         OrbitoStageModel model = (OrbitoStageModel)gameStageModel;
-
-        Scanner s=new Scanner(System.in);
-
-        do {
-            System.out.println("Entrez la taille de la grille (4 ou 6) : ");
-            this.taille = s.nextInt();
-        } while (this.taille != 4 && this.taille != 6);
 
         addLook(new TextLook(model.getPlayerName()));
         addLook(new ClassicBoardLook(this.taille,this.taille, model.getBoard(),1, 1, true));

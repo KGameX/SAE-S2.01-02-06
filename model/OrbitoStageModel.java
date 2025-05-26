@@ -33,7 +33,7 @@ public class OrbitoStageModel extends GameStageModel {
 
     // define stage state variables
     private int blackPawnsToPlay;
-    private int redPawnsToPlay;
+    private int whitePawnsToPlay;
 
     // define stage game elements
     private OrbitoBoard board;
@@ -76,25 +76,13 @@ public class OrbitoStageModel extends GameStageModel {
     public int getNbr_row() {
         return this.nbr_row;
     }
-    // Uncomment next line if the example with a main container is used. see end of HoleStageFactory and HoleStageView
-    //private ContainerElement mainContainer;
 
     public OrbitoStageModel(String name, Model model) {
         super(name, model);
+        blackPawnsToPlay = 8;
+        whitePawnsToPlay = 8;
         setupCallbacks();
     }
-
-    //Uncomment this 2 methods if example with a main container is used
-    /*
-    public ContainerElement getMainContainer() {
-        return mainContainer;
-    }
-
-    public void setMainContainer(ContainerElement mainContainer) {
-        this.mainContainer = mainContainer;
-        addContainer(mainContainer);
-    }
-     */
 
     public OrbitoBoard getBoard() {
         return board;
@@ -158,7 +146,7 @@ public class OrbitoStageModel extends GameStageModel {
                 blackPawnsToPlay--;
             }
             else {
-                redPawnsToPlay--;
+                whitePawnsToPlay--;
             }
             computePartyResult();
 

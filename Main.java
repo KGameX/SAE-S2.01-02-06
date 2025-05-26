@@ -8,8 +8,18 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Quel mode voulez vous jouer ? (0 = human vs human / 1 = human vs computer / 2 = computer vs computer)");
-        int mode = scanner.nextInt();
+        Logger.setLevel(Logger.LOGGER_TRACE);
+        Logger.setVerbosity(Logger.VERBOSE_HIGH);
+        int mode = 0;
+        if (args.length == 1) {
+            try {
+                mode = Integer.parseInt(args[0]);
+                if ((mode <0) || (mode>2)) mode = 0;
+            }
+            catch(NumberFormatException e) {
+                mode = 0;
+            }
+        }
         Model model = new Model();
         if (mode == 0) {
             model.addHumanPlayer("player1");
