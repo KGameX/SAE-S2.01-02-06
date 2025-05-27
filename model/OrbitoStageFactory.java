@@ -25,13 +25,22 @@ public class OrbitoStageFactory extends StageElementsFactory {
     protected int nbr_column;
     protected int nbr_row;
 
-    public OrbitoStageFactory(GameStageModel gameStageModel,int nbr_column,int nbr_row) {
+    public OrbitoStageFactory(GameStageModel gameStageModel) {
         super(gameStageModel);
         stageModel = (OrbitoStageModel) gameStageModel;
+    }
+    public void set_nbr_column(int nbr_column) {
         this.nbr_column = nbr_column;
+    }
+    public void set_nbr_row(int nbr_row) {
         this.nbr_row = nbr_row;
     }
-
+    public int get_nbr_column() {
+        return nbr_column;
+    }
+    public int get_nbr_row() {
+        return nbr_row;
+    }
     @Override
     public void setup() {
 
@@ -41,7 +50,9 @@ public class OrbitoStageFactory extends StageElementsFactory {
         stageModel.setPlayerName(text);
 
         // create the board, in 0,1 in the virtual space
-        OrbitoBoard board = new OrbitoBoard(0, 1, this.nbr_row,this.nbr_column,stageModel);
+        OrbitoBoard board = new OrbitoBoard(0, 1 ,this.nbr_row,this.nbr_column,stageModel);
+        board.set_nbr_row(this.nbr_row);
+        board.set_nbr_col(this.nbr_column);
         // assign the board to the game stage model
         stageModel.setBoard(board);
 

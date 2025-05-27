@@ -9,13 +9,22 @@ import java.util.List;
 import java.awt.*;
 public class OrbitoBoard extends ContainerElement {
     private int nbr_row,nbr_col;
-    public OrbitoBoard(int x, int y,int nbr_row,int nbr_col, GameStageModel gameStageModel) {
+    public OrbitoBoard(int x, int y,int nbr_row,int nbr_col,GameStageModel gameStageModel) {
         // call the super-constructor to create a 3x3 grid, named "Orbitoboard", and in x,y in space
-        super("Orbitoboard", x, y, 3 , 3, gameStageModel);
+        super("Orbitoboard", x, y, nbr_row , nbr_col, gameStageModel);
+    }
+    public void set_nbr_row(int nbr_row) {
         this.nbr_row = nbr_row;
+    }
+    public void set_nbr_col(int nbr_col) {
         this.nbr_col = nbr_col;
     }
-
+    public int getNbRows(){
+        return nbr_row;
+    }
+    public int getNbCols(){
+        return nbr_col;
+    }
     public void setValidCells(int x,int y) {
         Logger.debug("called",this);
         resetReachableCells(false);

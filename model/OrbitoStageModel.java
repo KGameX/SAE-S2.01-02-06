@@ -271,6 +271,9 @@ public class OrbitoStageModel extends GameStageModel {
 
     @Override
     public StageElementsFactory getDefaultElementFactory() {
-        return new OrbitoStageFactory(this,this.nbr_column,this.nbr_row);
+        OrbitoStageFactory ostf=new OrbitoStageFactory(this);
+        ostf.set_nbr_column(this.nbr_column);
+        ostf.set_nbr_row(this.nbr_row);
+        return ostf;
     }
 }
