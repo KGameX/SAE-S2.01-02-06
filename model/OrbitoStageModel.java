@@ -79,8 +79,12 @@ public class OrbitoStageModel extends GameStageModel {
 
     public OrbitoStageModel(String name, Model model) {
         super(name, model);
-        blackPawnsToPlay = 8;
-        whitePawnsToPlay = 8;
+        int taille = OrbitoStageFactory.getDefaultSize();
+        this.nbr_row = 4;
+        this.nbr_align = 4;
+        int nbrBilles = (nbr_column * nbr_row) / 2;
+        blackPawnsToPlay = nbrBilles;
+        whitePawnsToPlay = nbrBilles;
         this.whiteMarbles = new Pawn[whitePawnsToPlay];
         this.blackMarbles = new Pawn[blackPawnsToPlay];
         setupCallbacks();
@@ -113,20 +117,20 @@ public class OrbitoStageModel extends GameStageModel {
     public Pawn[] getWhiteMarbles() {
         return whiteMarbles;
     }
-    public void setWhiteMarbles(Pawn[] blackPawns) {
-        this.whiteMarbles = blackPawns;
-        for(int i=0;i<blackPawns.length;i++) {
-            addElement(blackPawns[i]);
+    public void setWhiteMarbles(Pawn[] whitePawns) {
+        this.whiteMarbles = whitePawns;
+        for(int i=0;i<whitePawns.length;i++) {
+            addElement(whitePawns[i]);
         }
     }
 
     public Pawn[] getBlackMarbles() {
         return this.blackMarbles;
     }
-    public void setBlackMarbles(Pawn[] redPawns) {
-        this.blackMarbles = redPawns;
-        for(int i=0;i<redPawns.length;i++) {
-            addElement(redPawns[i]);
+    public void setBlackMarbles(Pawn[] blackPawns) {
+        this.blackMarbles = blackPawns;
+        for(int i=0;i<blackPawns.length;i++) {
+            addElement(blackPawns[i]);
         }
     }
 

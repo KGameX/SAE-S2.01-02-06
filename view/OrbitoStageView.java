@@ -9,19 +9,23 @@ import model.OrbitoStageModel;
 import java.util.Scanner;
 
 public class OrbitoStageView extends GameStageView {
-    private int taille;
     public OrbitoStageView(String name, GameStageModel gameStageModel) {
         super(name,gameStageModel);
     }
     @Override
     public void createLooks() {
         OrbitoStageModel model = (OrbitoStageModel)gameStageModel;
-        System.out.println("Valeurs "+model.getBlackMarbles());
+
+        int taille = model.getBoard().getNbCols();
+
         addLook(new TextLook(model.getPlayerName()));
-        addLook(new ClassicBoardLook(this.taille,this.taille, model.getBoard(),1, 1, true));
+        addLook(new ClassicBoardLook(taille, taille, model.getBoard(),1, 1, true));
         addLook(new BlackMarblePotLook(model.getBlackPot()));
         addLook(new WhiteMarblePotLook(model.getWhitePot()));
-        for(int i = 0; i < 8; i++) {
+
+        int nbrBilles = (taille * taille) / 2;
+
+        for(int i = 0; i < nbrBilles; i++) {
             addLook(new MarbleLook(model.getBlackMarbles()[i]));
             addLook(new MarbleLook(model.getWhiteMarbles()[i]));
         }

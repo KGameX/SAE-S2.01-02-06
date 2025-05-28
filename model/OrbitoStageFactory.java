@@ -24,11 +24,25 @@ public class OrbitoStageFactory extends StageElementsFactory {
     private OrbitoStageModel stageModel;
     protected int nbr_column;
     protected int nbr_row;
+    private static int defaultSize = 4;
 
     public OrbitoStageFactory(GameStageModel gameStageModel) {
         super(gameStageModel);
         stageModel = (OrbitoStageModel) gameStageModel;
+        if (nbr_column == 0) {
+            this.nbr_column = defaultSize;
+            this.nbr_row = defaultSize;
+        }
     }
+
+    public static void setDefaultSize(int taille) {
+        defaultSize = taille;
+    }
+
+    public static int getDefaultSize() {
+        return defaultSize;
+    }
+
     public void set_nbr_column(int nbr_column) {
         this.nbr_column = nbr_column;
     }
@@ -44,6 +58,11 @@ public class OrbitoStageFactory extends StageElementsFactory {
     @Override
     public void setup() {
 
+        if (nbr_column == 0) {
+            this.nbr_column = defaultSize;
+            this.nbr_row = defaultSize;
+        }
+
         // create the text that displays the player name and put it in 0,0 in the virtual space
         TextElement text = new TextElement(stageModel.getCurrentPlayerName(), stageModel);
         text.setLocation(0,0);
@@ -56,8 +75,8 @@ public class OrbitoStageFactory extends StageElementsFactory {
         // assign the board to the game stage model
         stageModel.setBoard(board);
 
-        OrbitoMarblePot marblePotWhite = new OrbitoMarblePot(18,0,this.nbr_row,this.nbr_column,stageModel);
-        OrbitoMarblePot marblePotBlack = new OrbitoMarblePot(18,0,this.nbr_row,this.nbr_column, stageModel);
+        OrbitoMarblePot marblePotWhite = new OrbitoMarblePot(15,0,8,1,stageModel);
+        OrbitoMarblePot marblePotBlack = new OrbitoMarblePot(20,0,8,1, stageModel);
 
         stageModel.setWhitePot(marblePotWhite);
         stageModel.setBlackPot(marblePotBlack);
@@ -66,16 +85,16 @@ public class OrbitoStageFactory extends StageElementsFactory {
             NB: their coordinates are by default 0,0 but since they are put
             within the pots, their real coordinates will be computed by the view
          */
-        int nbr_billes=8;
+        int nbr_billes = (this.nbr_column * this.nbr_row) / 2;
         Pawn[] WhiteMarbles = new Pawn[nbr_billes];
         for(int i=0;i<nbr_billes;i++) {
-            WhiteMarbles[i] = new Pawn(i + 1, Pawn.PAWN_BLACK, stageModel);
+            WhiteMarbles[i] = new Pawn(i + 1, Pawn.PAWN_WHITE, stageModel);
         }
         // assign the black pawns to the game stage model
         stageModel.setWhiteMarbles(WhiteMarbles);
         Pawn[] BlackMarbles = new Pawn[nbr_billes];
         for(int i=0;i<nbr_billes;i++) {
-            BlackMarbles[i] = new Pawn(i + 1, Pawn.PAWN_RED, stageModel);
+            BlackMarbles[i] = new Pawn(i + 1, Pawn.PAWN_BLACK, stageModel);
         }
         // assign the black pawns to the game stage model
         stageModel.setBlackMarbles(BlackMarbles);
