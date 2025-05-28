@@ -81,6 +81,8 @@ public class OrbitoStageModel extends GameStageModel {
         super(name, model);
         blackPawnsToPlay = 8;
         whitePawnsToPlay = 8;
+        this.whiteMarbles = new Pawn[whitePawnsToPlay];
+        this.blackMarbles = new Pawn[blackPawnsToPlay];
         setupCallbacks();
     }
 
@@ -93,7 +95,7 @@ public class OrbitoStageModel extends GameStageModel {
     }
 
     public OrbitoMarblePot getWhitePot() {
-        return blackPot;
+        return whitePot;
     }
     public void setWhitePot(OrbitoMarblePot whitePot) {
         this.whitePot = whitePot;
@@ -101,7 +103,7 @@ public class OrbitoStageModel extends GameStageModel {
     }
 
     public OrbitoMarblePot getBlackPot() {
-        return whitePot;
+        return blackPot;
     }
     public void setBlackPot(OrbitoMarblePot blackPot) {
         this.blackPot = blackPot;
@@ -119,7 +121,7 @@ public class OrbitoStageModel extends GameStageModel {
     }
 
     public Pawn[] getBlackMarbles() {
-        return blackMarbles;
+        return this.blackMarbles;
     }
     public void setBlackMarbles(Pawn[] redPawns) {
         this.blackMarbles = redPawns;

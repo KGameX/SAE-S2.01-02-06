@@ -16,7 +16,7 @@ public class OrbitoStageView extends GameStageView {
     @Override
     public void createLooks() {
         OrbitoStageModel model = (OrbitoStageModel)gameStageModel;
-
+        System.out.println("MODELE "+model);
         addLook(new TextLook(model.getPlayerName()));
         addLook(new ClassicBoardLook(this.taille,this.taille, model.getBoard(),1, 1, true));
         addLook(new BlackMarblePotLook(model.getBlackPot()));

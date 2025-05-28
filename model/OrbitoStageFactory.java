@@ -59,6 +59,9 @@ public class OrbitoStageFactory extends StageElementsFactory {
         OrbitoMarblePot marblePotWhite = new OrbitoMarblePot(18,0,this.nbr_row,this.nbr_column,stageModel);
         OrbitoMarblePot marblePotBlack = new OrbitoMarblePot(18,0,this.nbr_row,this.nbr_column, stageModel);
 
+        stageModel.setWhitePot(marblePotWhite);
+        stageModel.setBlackPot(marblePotBlack);
+
         /* create the pawns
             NB: their coordinates are by default 0,0 but since they are put
             within the pots, their real coordinates will be computed by the view
