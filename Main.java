@@ -95,6 +95,10 @@ public class Main {
 
         OrbitoStageFactory.setDefaultSize(taille);
 
+        System.out.println("Quel est le nombre de billes nécessaire à aligner pour gagner?");
+        int nbr_aligner = scanner.nextInt();
+        OrbitoStageFactory.setNbr_align(nbr_aligner);
+
         StageFactory.registerModelAndView("orbito", "model.OrbitoStageModel", "view.OrbitoStageView");
         View orbitoView = new View(model);
         OrbitoController control = new OrbitoController(model, orbitoView, computerMode, rotation);

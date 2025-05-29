@@ -25,6 +25,7 @@ public class OrbitoStageFactory extends StageElementsFactory {
     protected int nbr_column;
     protected int nbr_row;
     private static int defaultSize = 4;
+    public static int nbr_align;
 
     public OrbitoStageFactory(GameStageModel gameStageModel) {
         super(gameStageModel);
@@ -33,6 +34,14 @@ public class OrbitoStageFactory extends StageElementsFactory {
             this.nbr_column = defaultSize;
             this.nbr_row = defaultSize;
         }
+    }
+
+    public static int getNbr_align() {
+        return OrbitoStageFactory.nbr_align;
+    }
+
+    public static void setNbr_align(int nbr_align) {
+        OrbitoStageFactory.nbr_align = nbr_align;
     }
 
     public static void setDefaultSize(int taille) {
@@ -86,6 +95,8 @@ public class OrbitoStageFactory extends StageElementsFactory {
 
         stageModel.setWhitePot(marblePotWhite);
         stageModel.setBlackPot(marblePotBlack);
+
+        stageModel.setNbr_align(OrbitoStageFactory.nbr_align);
 
         /* create the pawns
             NB: their coordinates are by default 0,0 but since they are put
