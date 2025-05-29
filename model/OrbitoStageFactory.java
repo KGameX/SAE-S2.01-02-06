@@ -97,6 +97,8 @@ public class OrbitoStageFactory extends StageElementsFactory {
         stageModel.setBlackPot(marblePotBlack);
 
         stageModel.setNbr_align(OrbitoStageFactory.nbr_align);
+        stageModel.setNbr_column(defaultSize);
+        stageModel.setNbr_row(defaultSize);
 
         /* create the pawns
             NB: their coordinates are by default 0,0 but since they are put

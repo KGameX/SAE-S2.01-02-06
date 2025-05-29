@@ -192,11 +192,11 @@ public class OrbitoStageModel extends GameStageModel {
 
         return etendue;
     }
-    //todo: gérer le nombre de billes d'alignement gagnant
+
     private void computePartyResult() {
         int idWinner = -1;
         ArrayList<ArrayList<Character>> arr=this.extend_matrix();
-        int nbr_aligner=5;
+        int nbr_aligner=this.nbr_align;
         for (int y=1;y<arr.size()-1;y++){
             for (int x=1;x<arr.get(y).size()-1;x++){
                 ArrayList<ArrayList> vecteur=new ArrayList<>();
@@ -281,6 +281,7 @@ public class OrbitoStageModel extends GameStageModel {
         OrbitoStageFactory ostf=new OrbitoStageFactory(this);
         ostf.set_nbr_column(this.nbr_column);
         ostf.set_nbr_row(this.nbr_row);
+        ostf.setNbr_align(this.nbr_align);
         return ostf;
     }
 }
