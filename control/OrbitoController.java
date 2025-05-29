@@ -25,11 +25,13 @@ public class OrbitoController extends Controller {
     BufferedReader consoleIn;
     boolean firstPlayer;
     int computerMode;
+    boolean[] rotation;
 
-    public OrbitoController(Model model, View view, int computerMode) {
+    public OrbitoController(Model model, View view, int computerMode, boolean[] rotation) {
         super(model, view);
         firstPlayer = true;
         this.computerMode = computerMode;
+        this.rotation = rotation;
     }
 
     /**
@@ -39,10 +41,13 @@ public class OrbitoController extends Controller {
      */
     public void stageLoop() {
         consoleIn = new BufferedReader(new InputStreamReader(System.in));
+        OrbitoStageModel stageModel = (OrbitoStageModel) model.getGameStage();
+        stageModel.setRotation(rotation);
         update();
         while(! model.isEndStage()) {
             playTurn();
             endOfTurn();
+            rotateBoard();
             update();
         }
         endGame();
@@ -51,43 +56,50 @@ public class OrbitoController extends Controller {
     private void playTurn() {
         // get the new player
         Player p = model.getCurrentPlayer();
+        boolean ok = false;
         if (p.getType() == Player.COMPUTER) {
             System.out.println("COMPUTER PLAYS");
             OrbitoDecider decider = new OrbitoDecider(model,this, computerMode);
             ActionPlayer play = new ActionPlayer(model, this, decider, null);
             play.start();
         } else {
-            System.out.println("It's your turn.\nDo you want to move an opponent's marble ?");
-            String ans = "x";
-            try {
-                while (!"YyNn".contains(ans)) {
-                    System.out.print(p.getName() + " (y/N) > ");
-                    ans = consoleIn.readLine();
-                }
-            } catch (IOException e) {/*Something went wrong ?*/}
-
-            boolean ok = false;
-
-            if ((ans.equals("Y")) || (ans.equals("y"))) {
-                System.out.println("Enter the coordinates of the marble you want to move, and the destination cell.");
-                while (!ok) {
-                    System.out.print(p.getName() + " > ");
-                    try {
-                        String line = consoleIn.readLine();
-                        if (line.length() == 4) {
-                            ok = moveMarble(line);
+            if (firstPlayer) {
+                firstPlayer = false;
+            } else {
+                System.out.println("It's your turn.\nDo you want to move an opponent's marble ?");
+                String ans = "x";
+                try {
+                    while (!"YyNn".contains(ans)) {
+                        ans = "N";
+                        System.out.print(p.getName() + " (y/N) > ");
+                        ans = consoleIn.readLine();
+                        if (ans.length() > 1) {
+                            ans = "x";
                         }
+                    }
+                } catch (IOException e) {/*Something went wrong ?*/}
 
-                        if (!ok) {
-                            System.out.println("Incorrect coordinates or already occupied cell. retry !");
-                        }
-                    } catch (IOException e) {/*Something went wrong ?*/}
+                if ((ans.equals("Y")) || (ans.equals("y"))) {
+                    System.out.println("Enter the coordinates of the marble you want to move, and the destination cell.");
+                    while (!ok) {
+                        System.out.print(p.getName() + " > ");
+                        try {
+                            String line = consoleIn.readLine();
+                            if (line.length() == 4) {
+                                ok = moveMarble(line);
+                            }
+
+                            if (!ok) {
+                                System.out.println("Incorrect coordinates or already occupied cell. retry !");
+                            }
+                        } catch (IOException e) {/*Something went wrong ?*/}
+                    }
                 }
             }
 
             ok = false;
 
-            System.out.println("Now, place a marble in the space of your choice.");
+            System.out.println("Place a marble in the space of your choice.");
             while (!ok) {
                 System.out.print(p.getName()+ " > ");
                 try {
@@ -105,7 +117,6 @@ public class OrbitoController extends Controller {
     }
 
     public void endOfTurn() {
-        rotateBoard();
         model.setNextPlayer();
         // get the new player to display its name
         Player p = model.getCurrentPlayer();
