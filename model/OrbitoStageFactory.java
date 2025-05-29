@@ -76,13 +76,13 @@ public class OrbitoStageFactory extends StageElementsFactory {
         // assign the board to the game stage model
         stageModel.setBoard(board);
 
-        int whitePotX = this.nbr_column + 2;
-        int blackPotX = this.nbr_column + 5;
+        int whitePotX = this.nbr_column * 7;
+        int blackPotX = this.nbr_column * 7 + 5;
 
         int nbr_billes = (this.nbr_column * this.nbr_row) / 2;
 
-        OrbitoMarblePot marblePotWhite = new OrbitoMarblePot(whitePotX,0, nbr_billes,1,stageModel);
-        OrbitoMarblePot marblePotBlack = new OrbitoMarblePot(blackPotX,0, nbr_billes,1, stageModel);
+        OrbitoMarblePot marblePotWhite = new OrbitoMarblePot(whitePotX,2, nbr_billes,1,stageModel);
+        OrbitoMarblePot marblePotBlack = new OrbitoMarblePot(blackPotX,2, nbr_billes,1, stageModel);
 
         stageModel.setWhitePot(marblePotWhite);
         stageModel.setBlackPot(marblePotBlack);
