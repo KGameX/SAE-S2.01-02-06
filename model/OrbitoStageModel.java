@@ -80,7 +80,8 @@ public class OrbitoStageModel extends GameStageModel {
     public OrbitoStageModel(String name, Model model) {
         super(name, model);
         int taille = OrbitoStageFactory.getDefaultSize();
-        this.nbr_row = 4;
+        this.nbr_row = taille;
+        this.nbr_column = taille;
         this.nbr_align = 4;
         int nbrBilles = (nbr_column * nbr_row) / 2;
         blackPawnsToPlay = nbrBilles;

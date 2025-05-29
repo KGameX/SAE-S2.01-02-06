@@ -11,7 +11,9 @@ public class OrbitoMarblePot extends ContainerElement {
     int nbrRows, nbrCols;
     public OrbitoMarblePot(int x, int y,int nbr_row,int nbr_col, GameStageModel gameStageModel) {
         // call the super-constructor to create a 4x1 grid, named "pawnpot", and in x,y in space
-        super("marblepot", x, y,  nbr_row, 1,gameStageModel);
+        super("marblepot", x, y,  nbr_row, nbr_col,gameStageModel);
+        this.nbrRows = nbr_row;
+        this.nbrCols = nbr_col;
     }
     public int getNbRows(){
         return this.nbrRows;

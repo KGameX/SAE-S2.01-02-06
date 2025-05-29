@@ -55,6 +55,7 @@ public class OrbitoStageFactory extends StageElementsFactory {
     public int get_nbr_row() {
         return nbr_row;
     }
+
     @Override
     public void setup() {
 
@@ -75,8 +76,13 @@ public class OrbitoStageFactory extends StageElementsFactory {
         // assign the board to the game stage model
         stageModel.setBoard(board);
 
-        OrbitoMarblePot marblePotWhite = new OrbitoMarblePot(15,0,8,1,stageModel);
-        OrbitoMarblePot marblePotBlack = new OrbitoMarblePot(20,0,8,1, stageModel);
+        int whitePotX = this.nbr_column + 2;
+        int blackPotX = this.nbr_column + 5;
+
+        int nbr_billes = (this.nbr_column * this.nbr_row) / 2;
+
+        OrbitoMarblePot marblePotWhite = new OrbitoMarblePot(whitePotX,0, nbr_billes,1,stageModel);
+        OrbitoMarblePot marblePotBlack = new OrbitoMarblePot(blackPotX,0, nbr_billes,1, stageModel);
 
         stageModel.setWhitePot(marblePotWhite);
         stageModel.setBlackPot(marblePotBlack);
@@ -85,13 +91,13 @@ public class OrbitoStageFactory extends StageElementsFactory {
             NB: their coordinates are by default 0,0 but since they are put
             within the pots, their real coordinates will be computed by the view
          */
-        int nbr_billes = (this.nbr_column * this.nbr_row) / 2;
         Pawn[] WhiteMarbles = new Pawn[nbr_billes];
         for(int i=0;i<nbr_billes;i++) {
             WhiteMarbles[i] = new Pawn(i + 1, Pawn.PAWN_WHITE, stageModel);
         }
         // assign the black pawns to the game stage model
         stageModel.setWhiteMarbles(WhiteMarbles);
+
         Pawn[] BlackMarbles = new Pawn[nbr_billes];
         for(int i=0;i<nbr_billes;i++) {
             BlackMarbles[i] = new Pawn(i + 1, Pawn.PAWN_BLACK, stageModel);
@@ -99,9 +105,8 @@ public class OrbitoStageFactory extends StageElementsFactory {
         // assign the black pawns to the game stage model
         stageModel.setBlackMarbles(BlackMarbles);
 
-        int nbr_bille=(this.nbr_column*this.nbr_row)/2;
         // finally put the pawns to their pot
-        for (int i=0;i<nbr_bille;i++) {
+        for (int i=0;i<nbr_billes;i++) {
             marblePotWhite.addElement(WhiteMarbles[i], i,0);
             marblePotBlack.addElement(BlackMarbles[i], i,0);
         }
