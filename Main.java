@@ -99,10 +99,10 @@ public class Main {
         int nbr_aligner = scanner.nextInt();
         OrbitoStageFactory.setNbr_align(nbr_aligner);
 
-        StageFactory.registerModelAndView("orbito", "model.OrbitoStageModel", "view.OrbitoStageView");
+        StageFactory.registerModelAndView("orbito++", "model.OrbitoStageModel", "view.OrbitoStageView");
         View orbitoView = new View(model);
         OrbitoController control = new OrbitoController(model, orbitoView, computerMode, rotation);
-        control.setFirstStageName("orbito");
+        control.setFirstStageName("orbito++");
         try {
             control.startGame();
             control.stageLoop();

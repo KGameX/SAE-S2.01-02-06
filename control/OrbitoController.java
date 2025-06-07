@@ -126,228 +126,25 @@ public class OrbitoController extends Controller {
     }
 
     public void rotateBoard() {
+        List<MoveMarble> list = new ArrayList<>();
         OrbitoStageModel stageModel = (OrbitoStageModel) model.getGameStage();
         OrbitoBoard board = stageModel.getBoard();
-        boolean[] rotations = stageModel.getRotation();
-        int n = board.getNbRows();
 
-        int rings = rotations.length;
-
-        OrbitoMarblePot outerRingStocker = new OrbitoMarblePot(0, 0, 1, 20, stageModel);
-        OrbitoMarblePot middleRingStocker = new OrbitoMarblePot(0, 0, 1, 12, stageModel);
-        OrbitoMarblePot innerRingStocker = new OrbitoMarblePot(0, 0, 1, 4, stageModel);
-
-        int offset = 0;
-        GameElement marble = null;
-
-        if (rings == 3) {
-            offset = 1;
-            for (int x = 0; x < 5; x++) {
-                marble = board.getElement(x, 0);
-                if (marble != null) {
-                    board.removeElement(marble);
-                    outerRingStocker.addElement(marble, 0, x);
-                }
-            }
-            for (int y = 0; y < 5; y++) {
-                marble = board.getElement(5, y);
-                if (marble != null) {
-                    board.removeElement(marble);
-                    outerRingStocker.addElement(marble, 0, y + 5);
-                }
-            }
-            for (int x = 5; x >= 1; x--) {
-                marble = board.getElement(x, 5);
-                if (marble != null) {
-                    board.removeElement(marble);
-                    outerRingStocker.addElement(marble, 0, (5 - x) + 10);
-                }
-            }
-            for (int y = 5; y >= 1; y--) {
-                marble = board.getElement(0, y);
-                if (marble != null) {
-                    board.removeElement(marble);
-                    outerRingStocker.addElement(marble, 0, (5 - y) + 15);
+        for (int row = 0; row < board.getNbRows(); row++) {
+            for (int col = 0; col < board.getNbCols(); col++) {
+                if (!board.isElementAt(row, col)) {
+                    Pawn pawn = (Pawn) board.getElement(row, col);
+                    if (pawn != null) {
+                        MoveMarble moveMarble = new MoveMarble(pawn, row, col);
+                        list.add(moveMarble);
+                    }
                 }
             }
         }
 
-        for (int x = 0; x < 3; x++) {
-            marble = board.getElement(x, offset);
-            if (marble != null) {
-                board.removeElement(marble);
-                middleRingStocker.addElement(marble, 0, x);
-            }
-        }
-        for (int y = 0; y < 3; y++) {
-            marble = board.getElement(3 + offset, y);
-            if (marble != null) {
-                board.removeElement(marble);
-                middleRingStocker.addElement(marble, 0, y + 3);
-            }
-        }
-        for (int x = 2; x >= 1; x--) {
-            marble = board.getElement(x, 3 + offset);
-            if (marble != null) {
-                board.removeElement(marble);
-                middleRingStocker.addElement(marble, 0, (3 - x) + 6);
-            }
-        }
-        for (int y = 2; y >= 1; y--) {
-            marble = board.getElement(offset, y);
-            if (marble != null) {
-                board.removeElement(marble);
-                middleRingStocker.addElement(marble, 0, (3 - y) + 9);
-            }
-        }
-
-        marble = board.getElement(1 + offset, 1 + offset);
-        if (marble != null) {
-            board.removeElement(marble);
-            innerRingStocker.addElement(marble, 0, 0);
-        }
-        marble = board.getElement(1 + offset, 2 + offset);
-        if (marble != null) {
-            board.removeElement(marble);
-            innerRingStocker.addElement(marble, 0, 1);
-        }
-        marble = board.getElement(2 + offset, 2 + offset);
-        if (marble != null) {
-            board.removeElement(marble);
-            innerRingStocker.addElement(marble, 0, 2);
-        }
-        marble = board.getElement(2 + offset, 1 + offset);
-        if (marble != null) {
-            board.removeElement(marble);
-            innerRingStocker.addElement(marble, 0, 3);
-        }
-
-
-        if (rotations[0]) {
-            if (rings == 3) rotateClockwise(outerRingStocker);
-            rotateClockwise(middleRingStocker);
-            rotateClockwise(innerRingStocker);
-        } else {
-            if (rings == 3) rotateCounterClockwise(outerRingStocker);
-            rotateCounterClockwise(middleRingStocker);
-            rotateCounterClockwise(innerRingStocker);
-        }
-
-        if (rings == 3) {
-            for (int x = 0; x < 5; x++) {
-                marble = outerRingStocker.getElement(0, x);
-                if (marble != null) {
-                    outerRingStocker.removeElement(marble);
-                    board.addElement(marble, x, 0);
-                }
-            }
-            for (int y = 0; y < 5; y++) {
-                marble = outerRingStocker.getElement(0, y + 5);
-                if (marble != null) {
-                    outerRingStocker.removeElement(marble);
-                    board.addElement(marble, 5, y);
-                }
-            }
-            for (int x = 5; x >= 1; x--) {
-                marble = outerRingStocker.getElement(0, (5 - x) + 10);
-                if (marble != null) {
-                    outerRingStocker.removeElement(marble);
-                    board.addElement(marble, x, 5);
-                }
-            }
-            for (int y = 5; y >= 1; y--) {
-                marble = outerRingStocker.getElement(0, (5 - y) + 15);
-                if (marble != null) {
-                    outerRingStocker.removeElement(marble);
-                    board.addElement(marble, 0, y);
-                }
-            }
-        }
-
-        for (int x = 0; x < 3; x++) {
-            marble = middleRingStocker.getElement(0, x);
-            if (marble != null) {
-                middleRingStocker.removeElement(marble);
-                board.addElement(marble, x, offset);
-            }
-        }
-        for (int y = 0; y < 3; y++) {
-            marble = middleRingStocker.getElement(0, y + 3);
-            if (marble != null) {
-                middleRingStocker.removeElement(marble);
-                board.addElement(marble, 3 + offset, y);
-            }
-        }
-        for (int x = 2; x >= 1; x--) {
-            marble = middleRingStocker.getElement(0, (3 - x) + 6);
-            if (marble != null) {
-                middleRingStocker.removeElement(marble);
-                board.addElement(marble, x, 3 + offset);
-            }
-        }
-        for (int y = 2; y >= 1; y--) {
-            marble = middleRingStocker.getElement(0, (3 - y) + 9);
-            if (marble != null) {
-                middleRingStocker.removeElement(marble);
-                board.addElement(marble, offset, y);
-            }
-        }
-
-        marble = innerRingStocker.getElement(0, 0);
-        if (marble != null) {
-            innerRingStocker.removeElement(marble);
-            board.addElement(marble, 1 + offset, 1 + offset);
-        }
-        marble = innerRingStocker.getElement(0, 1);
-        if (marble != null) {
-            innerRingStocker.removeElement(marble);
-            board.addElement(marble, 1 + offset, 2 + offset);
-        }
-        marble = innerRingStocker.getElement(0, 2);
-        if (marble != null) {
-            innerRingStocker.removeElement(marble);
-            board.addElement(marble, 2 + offset, 2 + offset);
-        }
-        marble = innerRingStocker.getElement(0, 3);
-        if (marble != null) {
-            innerRingStocker.removeElement(marble);
-            board.addElement(marble, 2 + offset, 1 + offset);
-        }
-    }
-
-    private void rotateClockwise(OrbitoMarblePot stocker) {
-        int size = stocker.getNbCols();
-        GameElement lastElement = stocker.getElement(0, size - 1);
-        if (lastElement != null) {
-            stocker.removeElement(lastElement);
-        }
-        for (int i = size - 1; i > 0; i--) {
-            GameElement element = stocker.getElement(0, i - 1);
-            if (element != null) {
-                stocker.removeElement(element);
-                stocker.addElement(element, 0, i);
-            }
-        }
-        if (lastElement != null) {
-            stocker.addElement(lastElement, 0, 0);
-        }
-    }
-
-    private void rotateCounterClockwise(OrbitoMarblePot stocker) {
-        int size = stocker.getNbCols();
-        GameElement firstElement = stocker.getElement(0, 0);
-        if (firstElement != null) {
-            stocker.removeElement(firstElement);
-        }
-        for (int i = 0; i < size - 1; i++) {
-            GameElement element = stocker.getElement(0, i + 1);
-            if (element != null) {
-                stocker.removeElement(element);
-                stocker.addElement(element, 0, i);
-            }
-        }
-        if (firstElement != null) {
-            stocker.addElement(firstElement, 0, size - 1);
+        for (MoveMarble moveMarble : list) {
+            moveMarble.computeDest(rotation);
+            board.moveElement(moveMarble.getElement(), moveMarble.getRowDest(), moveMarble.getColDest());
         }
     }
 

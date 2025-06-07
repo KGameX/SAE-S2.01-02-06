@@ -23,12 +23,33 @@ public class OrbitoDecider extends Decider {
 
     @Override
     public ActionList decide() {
+
+        long startTime = Profiler.timestamp();
+
         if (computerMode == 0) {
             return decideGreedy();
         } else if (computerMode == 1) {
             return decideCenterControl();
         }
+
+        long executionTime = Profiler.timestamp() - startTime;
+        Profiler.globalTime += executionTime;
+        Profiler.nbExec++;
+        System.out.println("[Profiler] OrbitoDecider.decide() : " + executionTime + " ns");
+
         return decideCenterControl();
+    }
+
+    public static double averageExecutionTime() {
+        if (Profiler.nbExec == 0) return 0.0;
+        return (double) Profiler.globalTime / Profiler.nbExec;
+    }
+
+    public static void printProfilingStats() {
+        System.out.println("=== Statistiques OrbitoDecider ===");
+        System.out.println("Nombre d'exécutions : " + Profiler.nbExec);
+        System.out.println("Temps total : " + Profiler.getGlobalTime() + " ns");
+        System.out.println("Temps moyen : " + String.format("%.2f", averageExecutionTime()) + " ns");
     }
 
     public ActionList decideCenterControl() {
