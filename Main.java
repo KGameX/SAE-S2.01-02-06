@@ -10,8 +10,8 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Logger.setLevel(Logger.LOGGER_TRACE);
-        Logger.setVerbosity(Logger.VERBOSE_HIGH);
+        //Logger.setLevel(Logger.LOGGER_TRACE);
+        //Logger.setVerbosity(Logger.VERBOSE_HIGH);
         int mode = 0;
         if (args.length == 1) {
             try {
