@@ -154,7 +154,6 @@ public class OrbitoStageModel extends GameStageModel {
             } else {
                 whitePawnsToPlay--;
             }
-
         });
     }
     /*
