@@ -12,8 +12,8 @@ public class Pawn extends GameElement {
 
     private int number;
     private int color;
-    public static int PAWN_BLACK = 0;
-    public static int PAWN_WHITE = 1;
+    public static int PAWN_WHITE = 0;
+    public static int PAWN_BLACK = 1;
 
     public Pawn(int number, int color, GameStageModel gameStageModel) {
         super(gameStageModel);

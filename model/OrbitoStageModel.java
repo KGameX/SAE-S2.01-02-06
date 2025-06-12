@@ -151,11 +151,9 @@ public class OrbitoStageModel extends GameStageModel {
             Pawn p = (Pawn) element;
             if (p.getColor() == 0) {
                 blackPawnsToPlay--;
-            }
-            else {
+            } else {
                 whitePawnsToPlay--;
             }
-            computePartyResult();
 
         });
     }
@@ -193,87 +191,91 @@ public class OrbitoStageModel extends GameStageModel {
         return etendue;
     }
 
-    private void computePartyResult() {
+    public void computePartyResult() {
         int idWinner = -1;
-        ArrayList<ArrayList<Character>> arr=this.extend_matrix();
-        int nbr_aligner=this.nbr_align;
-        for (int y=1;y<arr.size()-1;y++){
-            for (int x=1;x<arr.get(y).size()-1;x++){
-                ArrayList<ArrayList> vecteur=new ArrayList<>();
-                String current=arr.get(y).get(x).toString();
-                ArrayList<Integer> temp;
-                //bas droite
-                if (current.equals(arr.get(y+1).get(x+1))) {
-                    temp=new ArrayList<>();
-                    temp.add(1,1);
-                    vecteur.add(temp);
+
+        boolean blackWin = check_align(Pawn.PAWN_BLACK);
+        boolean whiteWin = check_align(Pawn.PAWN_WHITE);
+
+        if (blackWin && whiteWin) {
+            model.setIdWinner(idWinner);
+            model.stopStage();
+        } else {
+            if (blackWin) {
+                idWinner = Pawn.PAWN_BLACK;
+                model.setIdWinner(idWinner);
+                model.stopStage();
+            } else if (whiteWin) {
+                idWinner = Pawn.PAWN_WHITE;
+                model.setIdWinner(idWinner);
+                model.stopStage();
+            }
+        }
+    }
+
+    private boolean check_align(int id_player) {
+        int size = getBoard().getNbCols();
+        for (int row = 0; row < size - nbr_align + 1; row++) {
+            for (int col = 0; col < size - nbr_align + 1; col++) {
+                Pawn[] line = new Pawn[nbr_align];
+                for (int i = 0; i < nbr_align; i++) {
+                    line[i] = (Pawn) getBoard().getElement(row + i, col + i);
                 }
-                // bas gauche
-                if (current.equals(arr.get(y+1).get(x-1))) {
-                    temp=new ArrayList<>();
-                    temp.add(1,-1);
-                    vecteur.add(temp);
-                }
-                //haut droite
-                if (current.equals(arr.get(y-1).get(x+1))) {
-                    temp=new ArrayList<>();
-                    temp.add(-1,1);
-                    vecteur.add(temp);
-                }
-                //haut gauche
-                if (current.equals(arr.get(y-1).get(x-1))) {
-                    temp=new ArrayList<>();
-                    temp.add(-1,-1);
-                    vecteur.add(temp);
-                }
-                //haut
-                if (current.equals(arr.get(y-1).get(x))) {
-                    temp=new ArrayList<>();
-                    temp.add(-1,0);
-                    vecteur.add(temp);
-                }
-                //bas
-                if (current.equals(arr.get(y+1).get(x))) {
-                    temp=new ArrayList<>();
-                    temp.add(1,0);
-                    vecteur.add(temp);
-                }
-                //droite
-                if (current.equals(arr.get(y).get(x+1))) {
-                    temp=new ArrayList<>();
-                    temp.add(0,1);
-                    vecteur.add(temp);
-                }
-                //gauche
-                if (current.equals(arr.get(y).get(x-1))) {
-                    temp=new ArrayList<>();
-                    temp.add(0,-1);
-                    vecteur.add(temp);
-                }
-                for (int vi=0;vi<vecteur.size();vi++){
-                    ArrayList<Integer> v=vecteur.get(vi);
-                    int nbr=2;
-                    int tx=x+v.get(1);
-                    int ty=y+v.get(0);
-                    char new_current=arr.get(tx).get(ty);
-                    for (int r=0;r<nbr_aligner-2;r++){
-                        if ((((ty+v.get(0)<6) && (tx+v.get(1)<6) && (tx+v.get(1)>=0) && (ty+v.get(0)>=0) && arr.get(ty+v.get(0)).get(tx+v.get(1)).equals(current)))){
-                            nbr++;
-                            ty+=v.get(0);
-                            tx+=v.get(1);
-                            new_current=arr.get(tx).get(ty);
-                            if (nbr==nbr_aligner){
-                                idWinner=Integer.valueOf(current);
-                            }
-                        }
-                    }
+
+                if (check_line(line, id_player)) {
+                    return true;
                 }
             }
         }
-        //((Pawn)getBoard().getElement(x, y)).getColor()
-        model.setIdWinner(idWinner);
-        // stop the game
-        model.stopStage();
+
+        for (int row = 0; row < size - nbr_align + 1; row++) {
+            for (int col = 0; col < size - nbr_align + 1; col++) {
+                Pawn[] line = new Pawn[nbr_align];
+                for (int i = 0; i < nbr_align; i++) {
+                    line[i] = (Pawn) getBoard().getElement(row + i, col + (nbr_align - 1 - i));
+                }
+
+                if (check_line(line, id_player)) {
+                    return true;
+                }
+            }
+        }
+
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size - nbr_align + 1; col++) {
+                Pawn[] line = new Pawn[nbr_align];
+                for (int i = 0; i < nbr_align; i++) {
+                    line[i] = (Pawn) getBoard().getElement(row, col + i);
+                }
+
+                if (check_line(line, id_player)) {
+                    return true;
+                }
+            }
+        }
+
+        for (int row = 0; row < size - nbr_align + 1; row++) {
+            for (int col = 0; col < size; col++) {
+                Pawn[] line = new Pawn[nbr_align];
+                for (int i = 0; i < nbr_align; i++) {
+                    line[i] = (Pawn) getBoard().getElement(row + i, col);
+                }
+
+                if (check_line(line, id_player)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean check_line(Pawn[] line, int id_player) {
+        for (Pawn pawn : line) {
+            if (pawn == null || pawn.getColor() != id_player) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

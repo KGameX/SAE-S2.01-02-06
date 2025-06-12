@@ -49,6 +49,7 @@ public class OrbitoController extends Controller {
             playTurn();
             endOfTurn();
             rotateBoard();
+            stageModel.computePartyResult();
             update();
         }
         endGame();
@@ -95,6 +96,7 @@ public class OrbitoController extends Controller {
                             }
                         } catch (IOException e) {/*Something went wrong ?*/}
                     }
+                    update();
                 }
             }
 
@@ -147,66 +149,51 @@ public class OrbitoController extends Controller {
 
         int size = board.getNbRows() - 1; // Assuming square board, so rows == cols
 
-        Pawn top_left = (Pawn) board.getElement(ring_index, ring_index);
-        Pawn top_right = (Pawn) board.getElement(ring_index, size - ring_index);
-        Pawn bottom_left = (Pawn) board.getElement(size - ring_index, ring_index);
-        Pawn bottom_right = (Pawn) board.getElement(size - ring_index, size - ring_index);
-
-        List<Pawn> top_list = new ArrayList<>();
-        List<Pawn> left_list = new ArrayList<>();
-        List<Pawn> right_list = new ArrayList<>();
-        List<Pawn> bottom_list = new ArrayList<>();
+        List<Pawn> topList = new ArrayList<>();
+        List<Pawn> leftList = new ArrayList<>();
+        List<Pawn> rightList = new ArrayList<>();
+        List<Pawn> bottomList = new ArrayList<>();
 
         for (int i = ring_index; i < size - ring_index; i++) {
-            Pawn pawn = (Pawn) board.getElement(ring_index, i);
-            top_list.add(pawn);
+            // Top row
+            Pawn topPawn = (Pawn) board.getElement(ring_index, i + 1);
+            topList.add(topPawn);
+
+            // Left column
+            Pawn leftPawn = (Pawn) board.getElement(i, ring_index);
+            leftList.add(leftPawn);
+
+            // Right column
+            Pawn rightPawn = (Pawn) board.getElement(i + 1, size - ring_index);
+            rightList.add(rightPawn);
+
+            // Bottom row
+            Pawn bottomPawn = (Pawn) board.getElement(size - ring_index, i);
+            bottomList.add(bottomPawn);
         }
 
-        for (int i = ring_index; i < size - ring_index; i++) {
-            Pawn pawn = (Pawn) board.getElement(i, size - ring_index);
-            right_list.add(pawn);
-        }
+        Pawn topLeftPawn = leftList.removeFirst();
+        Pawn topRightPawn = topList.removeLast();
+        Pawn bottomLeftPawn = bottomList.removeFirst();
+        Pawn bottomRightPawn = rightList.removeLast();
 
-        for (int i = ring_index; i < size - ring_index; i++) {
-            Pawn pawn = (Pawn) board.getElement(size - ring_index, i);
-            bottom_list.add(pawn);
-        }
-
-        for (int i = ring_index; i < size - ring_index; i++) {
-            Pawn pawn = (Pawn) board.getElement(i, ring_index);
-            left_list.add(pawn);
-        }
-
-        top_list.removeLast();
-        top_list.addFirst(top_left);
-
-        left_list.removeFirst();
-        left_list.add(bottom_left);
-
-        right_list.removeLast();
-        right_list.addFirst(top_right);
-
-        bottom_list.removeFirst();
-        bottom_list.add(bottom_right);
+        topList.addFirst(topLeftPawn);
+        leftList.addLast(bottomLeftPawn);
+        rightList.addFirst(topRightPawn);
+        bottomList.addLast(bottomRightPawn);
 
         for (int i = ring_index, counter = 0; i < size - ring_index; i++, counter++) {
-            Pawn pawn = top_list.get(counter);
-            if (pawn != null) board.moveElement(pawn, ring_index, i);
-        }
+            Pawn topPawn = topList.get(counter);
+            if (topPawn != null) board.moveElement(topPawn, ring_index, i + 1);
 
-        for (int i = ring_index, counter = 0; i < size - ring_index; i++, counter++) {
-            Pawn pawn = left_list.get(counter);
-            if (pawn != null) board.moveElement(pawn, i, ring_index);
-        }
+            Pawn leftPawn = leftList.get(counter);
+            if (leftPawn != null)  board.moveElement(leftPawn, i, ring_index);
 
-        for (int i = ring_index, counter = 0; i < size - ring_index; i++, counter++) {
-            Pawn pawn = right_list.get(counter);
-            if (pawn != null) board.moveElement(pawn, i, size - ring_index);
-        }
+            Pawn rightPawn = rightList.get(counter);
+            if (rightPawn != null) board.moveElement(rightPawn, i + 1, size - ring_index);
 
-        for (int i = ring_index + 1, counter = 0; i < size - ring_index; i++, counter++) {
-            Pawn pawn = bottom_list.get(counter);
-            if (pawn != null) board.moveElement(pawn, size - ring_index, i);
+            Pawn bottomPawn = bottomList.get(counter);
+            if (bottomPawn != null) board.moveElement(bottomPawn, size - ring_index, i);
         }
     }
 
@@ -216,67 +203,51 @@ public class OrbitoController extends Controller {
 
         int size = board.getNbRows() - 1; // Assuming square board, so rows == cols
 
-        Pawn top_left = (Pawn) board.getElement(ring_index, ring_index + 1);
-        Pawn top_right = (Pawn) board.getElement(ring_index + 1, size - ring_index);
-        Pawn bottom_left = (Pawn) board.getElement(size - ring_index - 1, ring_index);
-        Pawn bottom_right = (Pawn) board.getElement(size - ring_index, size - ring_index - 1);
-
-        List<Pawn> top_list = new ArrayList<>();
-        List<Pawn> left_list = new ArrayList<>();
-        List<Pawn> right_list = new ArrayList<>();
-        List<Pawn> bottom_list = new ArrayList<>();
+        List<Pawn> topList = new ArrayList<>();
+        List<Pawn> leftList = new ArrayList<>();
+        List<Pawn> rightList = new ArrayList<>();
+        List<Pawn> bottomList = new ArrayList<>();
 
         for (int i = ring_index; i < size - ring_index; i++) {
-            Pawn pawn = (Pawn) board.getElement(ring_index, i);
-            top_list.add(pawn);
+            // Top row
+            Pawn topPawn = (Pawn) board.getElement(ring_index, i);
+            topList.add(topPawn);
+
+            // Left column
+            Pawn leftPawn = (Pawn) board.getElement(i + 1, ring_index);
+            leftList.add(leftPawn);
+
+            // Right column
+            Pawn rightPawn = (Pawn) board.getElement(i, size - ring_index);
+            rightList.add(rightPawn);
+
+            // Bottom row
+            Pawn bottomPawn = (Pawn) board.getElement(size - ring_index, i + 1);
+            bottomList.add(bottomPawn);
         }
 
-        for (int i = ring_index; i < size - ring_index; i++) {
-            Pawn pawn = (Pawn) board.getElement(i, ring_index);
-            left_list.add(pawn);
-        }
+        Pawn topLeftPawn = topList.removeFirst();
+        Pawn topRightPawn = rightList.removeFirst();
+        Pawn bottomLeftPawn = leftList.removeLast();
+        Pawn bottomRightPawn = bottomList.removeLast();
 
-        for (int i = ring_index; i < size - ring_index; i++) {
-            Pawn pawn = (Pawn) board.getElement(i, size - ring_index);
-            right_list.add(pawn);
-        }
-
-        for (int i = ring_index; i < size - ring_index; i++) {
-            Pawn pawn = (Pawn) board.getElement(size - ring_index, i);
-            bottom_list.add(pawn);
-        }
-
-
-        top_list.removeFirst();
-        top_list.add(top_right);
-
-        left_list.removeLast();
-        left_list.addFirst(top_left);
-
-        right_list.removeFirst();
-        right_list.add(bottom_right);
-
-        bottom_list.removeLast();
-        bottom_list.addFirst(bottom_left);
+        topList.addLast(topRightPawn);
+        leftList.addFirst(topLeftPawn);
+        rightList.addLast(bottomRightPawn);
+        bottomList.addFirst(bottomLeftPawn);
 
         for (int i = ring_index, counter = 0; i < size - ring_index; i++, counter++) {
-            Pawn pawn = top_list.get(counter);
-            if (pawn != null) board.moveElement(pawn, ring_index, i);
-        }
+            Pawn topPawn = topList.get(counter);
+            if (topPawn != null) board.moveElement(topPawn, ring_index, i);
 
-        for (int i = ring_index, counter = 0; i < size - ring_index; i++, counter++) {
-            Pawn pawn = left_list.get(counter);
-            if (pawn != null) board.moveElement(pawn, i, ring_index);
-        }
+            Pawn leftPawn = leftList.get(counter);
+            if (leftPawn != null)  board.moveElement(leftPawn, i + 1, ring_index);
 
-        for (int i = ring_index, counter = 0; i < size - ring_index; i++, counter++) {
-            Pawn pawn = right_list.get(counter);
-            if (pawn != null) board.moveElement(pawn, i, size - ring_index);
-        }
+            Pawn rightPawn = rightList.get(counter);
+            if (rightPawn != null) board.moveElement(rightPawn, i, size - ring_index);
 
-        for (int i = ring_index + 1, counter = 0; i < size - ring_index; i++, counter++) {
-            Pawn pawn = bottom_list.get(counter);
-            if (pawn != null) board.moveElement(pawn, size - ring_index, i);
+            Pawn bottomPawn = bottomList.get(counter);
+            if (bottomPawn != null) board.moveElement(bottomPawn, size - ring_index, i + 1);
         }
     }
 
@@ -291,16 +262,19 @@ public class OrbitoController extends Controller {
         int colDest = (int) (line.charAt(2) - 'A');
         int rowDest = (int) (line.charAt(3) - '1');
 
+
         if ((colSrc < 0) || (colSrc > nbr_cols - 1)) return false;
         if ((rowSrc < 0) || (rowSrc > nbr_rows - 1)) return false;
         if ((colDest < 0) || (colDest > nbr_cols - 1)) return false;
         if ((rowDest < 0) || (rowDest > nbr_rows - 1)) return false;
 
-        Pawn pawn = (Pawn) board.getElement(colSrc, rowSrc);
+        Pawn pawn = (Pawn) board.getElement(rowSrc, colSrc);
         if (pawn == null) return false;
         if (board.isElementAt(rowDest, colDest)) return false;
 
         int playerID = model.getIdPlayer();
+        System.out.println(playerID);
+        System.out.println(pawn.getColor());
         if (playerID == pawn.getColor()) return false;
 
         // Checks if the move is legal by calculating the length between the two cells.

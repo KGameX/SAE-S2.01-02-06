@@ -19,7 +19,7 @@ public class OrbitoStageView extends GameStageView {
         int taille = model.getBoard().getNbCols();
 
         addLook(new TextLook(model.getPlayerName()));
-        addLook(new ClassicBoardLook(taille, taille, model.getBoard(),1, 1, true));
+        addLook(new ClassicBoardLook(2, 4, model.getBoard(),1, 1, true));
         addLook(new BlackMarblePotLook(model.getBlackPot()));
         addLook(new WhiteMarblePotLook(model.getWhitePot()));
 
