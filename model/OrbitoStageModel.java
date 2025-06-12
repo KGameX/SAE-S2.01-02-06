@@ -211,6 +211,11 @@ public class OrbitoStageModel extends GameStageModel {
                 model.stopStage();
             }
         }
+
+        if (blackPawnsToPlay == 0 && whitePawnsToPlay == 0) {
+            model.setIdWinner(idWinner);
+            model.stopStage();
+        }
     }
 
     private boolean check_align(int id_player) {

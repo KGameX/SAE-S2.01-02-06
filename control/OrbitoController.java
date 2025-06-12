@@ -92,7 +92,7 @@ public class OrbitoController extends Controller {
                             }
 
                             if (!ok) {
-                                System.out.println("Incorrect coordinates or already occupied cell. retry !");
+                                System.out.println("Incorrect move, coordinates or already occupied cell. retry !");
                             }
                         } catch (IOException e) {/*Something went wrong ?*/}
                     }

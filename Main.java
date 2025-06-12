@@ -95,8 +95,23 @@ public class Main {
 
         OrbitoStageFactory.setDefaultSize(taille);
 
-        System.out.println("Quel est le nombre de billes nécessaire à aligner pour gagner?");
-        int nbr_aligner = scanner.nextInt();
+        int nbr_aligner = 4;
+        if (taille == 6) {
+            System.out.println("How many marbles need to be aligned to win ? (4 or 6)");
+            System.out.print("> ");
+
+            try {
+                int choix = scanner.nextInt();
+                if (choix == 4 || choix == 6) {
+                    nbr_aligner = choix;
+                } else {
+                    System.out.println("Invalid choice, defaulting to 4 marbles.");
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid choice, defaulting to 4 marbles.");
+            }
+        }
+
         OrbitoStageFactory.setNbr_align(nbr_aligner);
 
         StageFactory.registerModelAndView("orbito++", "model.OrbitoStageModel", "view.OrbitoStageView");
