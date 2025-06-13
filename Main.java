@@ -12,16 +12,6 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         //Logger.setLevel(Logger.LOGGER_TRACE);
         //Logger.setVerbosity(Logger.VERBOSE_HIGH);
-        int mode = 0;
-        if (args.length == 1) {
-            try {
-                mode = Integer.parseInt(args[0]);
-                if ((mode <0) || (mode>2)) mode = 0;
-            }
-            catch(NumberFormatException e) {
-                mode = 0;
-            }
-        }
 
         System.out.println("Welcome to Orbito++.");
         System.out.println("Choose the size of the board :");
@@ -75,25 +65,44 @@ public class Main {
             System.out.println("Invalid input, defaulting to clockwise rotation for all rings.");
         }
 
-        Model model = new Model();
-        if (mode == 0) {
-            model.addHumanPlayer("player1");
-            model.addHumanPlayer("player2");
-        } else if (mode == 1) {
-            model.addHumanPlayer("player");
-            model.addComputerPlayer("computer");
-        } else if (mode == 2) {
-            model.addComputerPlayer("computer1");
-            model.addComputerPlayer("computer2");
+
+        int mode = 0;
+
+        System.out.println("Which mode do you want to play ?");
+        System.out.println("0 - Play against another human player");
+        System.out.println("1 - Play against a computer");
+        System.out.println("2 - Computer plays against another computer");
+        System.out.print("> ");
+
+        try {
+            int choix = scanner.nextInt();
+            if (choix == 0 || choix == 1 || choix == 2) {
+                mode = choix;
+            } else {
+                System.out.println("Invalid choice, defaulting to player vs player.");
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid choice, defaulting to player vs player.");
         }
 
         int computerMode = 0;
-        if (mode != 0){
-            System.out.println("Quel mode l'ordinateur doit-il jouer ? (0 = greedy / 1 = center control)");
-            computerMode = scanner.nextInt();
+        if (mode != 0) {
+            System.out.println("Which mode should the computer play ? (0 = random / 1 = best move)");
+
+            System.out.print("> ");
+
+            try {
+                int choix = scanner.nextInt();
+                if (choix == 0 || choix == 1) {
+                    computerMode = choix;
+                } else {
+                    System.out.println("Invalid choice, defaulting to random move.");
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid choice, defaulting to random move.");
+            }
         }
 
-        OrbitoStageFactory.setDefaultSize(taille);
 
         int nbr_aligner = 4;
         if (taille == 6) {
@@ -112,11 +121,24 @@ public class Main {
             }
         }
 
+        Model model = new Model();
+        OrbitoStageFactory.setDefaultSize(taille);
         OrbitoStageFactory.setNbr_align(nbr_aligner);
+
+        if (mode == 0) {
+            model.addHumanPlayer("player1");
+            model.addHumanPlayer("player2");
+        } else if (mode == 1) {
+            model.addHumanPlayer("player");
+            model.addComputerPlayer("computer");
+        } else if (mode == 2) {
+            model.addComputerPlayer("computer1");
+            model.addComputerPlayer("computer2");
+        }
 
         StageFactory.registerModelAndView("orbito++", "model.OrbitoStageModel", "view.OrbitoStageView");
         View orbitoView = new View(model);
-        OrbitoController control = new OrbitoController(model, orbitoView, computerMode, rotation);
+        OrbitoController control = new OrbitoController(model, orbitoView, computerMode, rotation, nbr_aligner);
         control.setFirstStageName("orbito++");
         try {
             control.startGame();

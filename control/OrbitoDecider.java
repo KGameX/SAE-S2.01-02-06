@@ -1,8 +1,10 @@
 package control;
 
 import boardifier.control.ActionFactory;
+import boardifier.control.ActionPlayer;
 import boardifier.control.Controller;
 import boardifier.control.Decider;
+import boardifier.model.ContainerElement;
 import boardifier.model.GameElement;
 import boardifier.model.Model;
 import boardifier.model.action.ActionList;
@@ -27,23 +29,12 @@ public class OrbitoDecider extends Decider {
         OrbitoStageModel gameStage = (OrbitoStageModel) model.getGameStage();
         OrbitoBoard board = gameStage.getBoard();
 
-        int size = board.getNbCols();
-
         long startTime = Profiler.timestamp();
 
-        Pawn[][] boardArray = new Pawn[size][size];
-
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                Pawn pawn = (Pawn) board.getElement(row, col);
-                boardArray[row][col] = pawn;
-            }
-        }
-
         if (computerMode == 0) {
-            return decideGreedy();
+            return decideRandom();
         } else if (computerMode == 1) {
-            return decideCenterControl();
+            return decideBestMove();
         }
 
         long executionTime = Profiler.timestamp() - startTime;
@@ -51,7 +42,7 @@ public class OrbitoDecider extends Decider {
         Profiler.nbExec++;
         System.out.println("[Profiler] OrbitoDecider.decide() : " + executionTime + " ns");
 
-        return decideCenterControl();
+        return decideRandom();
     }
 
     public static double averageExecutionTime() {
@@ -66,70 +57,83 @@ public class OrbitoDecider extends Decider {
         System.out.println("Temps moyen : " + String.format("%.2f", averageExecutionTime()) + " ns");
     }
 
-    public ActionList decideCenterControl() {
-        ActionList actions = null;
-        OrbitoStageModel stage = (OrbitoStageModel) model.getGameStage();
-        OrbitoBoard board = stage.getBoard();
-        OrbitoMarblePot pot = (model.getIdPlayer() == Pawn.PAWN_BLACK) ? stage.getBlackPot() : stage.getWhitePot();
-        GameElement bestPawn = null;
-        int bestRow = 0, bestCol = 0;
-        double minDist = Double.MAX_VALUE;
 
-        int centerRow = board.GetNbrRow() / 2;
-        int centerCol = board.GetNbrCol() / 2;
+    public ActionList decideRandom() {
+        OrbitoStageModel gameStage = (OrbitoStageModel) model.getGameStage();
+        OrbitoBoard orbitoBoard = gameStage.getBoard();
 
-        for (int i = 0; i < 8; i++) {
-            Pawn p = (Pawn) pot.getElement(i, 0);
-            if (p != null) {
-                List<Point> valid = board.computeValidCells(p.getNumber(), 0);
-                for (Point pt : valid) {
-                    double dist = Math.hypot(pt.x - centerCol, pt.y - centerRow);
-                    if (dist < minDist) {
-                        minDist = dist;
-                        bestPawn = p;
-                        bestRow = pt.y;
-                        bestCol = pt.x;
-                    }
-                }
+        int size = orbitoBoard.getNbCols();
+
+        Pawn[][] board = new Pawn[size][size];
+
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                Pawn pawn = (Pawn) orbitoBoard.getElement(row, col);
+                board[row][col] = pawn;
             }
         }
-        if (bestPawn == null) throw new IllegalStateException("Aucun coup possible");
-        actions = ActionFactory.generatePutInContainer(model, bestPawn, "orbitoboard", bestRow, bestCol);
-        actions.setDoEndOfTurn(true);
+
+        List<String> possibleMoves = getValidMarbleMoves(board, model.getIdPlayer());
+        System.out.println(possibleMoves);
+
+        ActionList actionMove = null;
+        ActionList actionPlace;
+
+        if (!possibleMoves.isEmpty()) {
+            String randomMove = possibleMoves.get((int) (Math.random() * possibleMoves.size()));
+
+            if (Math.random() < 0.5) {
+                moveMarble(board, randomMove, false);
+
+                int colSrc = randomMove.charAt(0) - 'A';
+                int rowSrc = randomMove.charAt(1) - '1';
+                int colDest = randomMove.charAt(2) - 'A';
+                int rowDest = randomMove.charAt(3) - '1';
+
+                System.out.println("Computer moves marble from " + randomMove.substring(0, 2) + " to " + randomMove.substring(2));
+
+                Pawn pawnMove = (Pawn) orbitoBoard.getElement(rowSrc, colSrc);
+                actionMove = ActionFactory.generateMoveWithinContainer(model, pawnMove, rowDest, colDest);
+            }
+        }
+
+        List<String> possibleCells = getValidCells(board);
+
+        System.out.println(possibleCells);
+        String randomCell = possibleCells.get((int) (Math.random() * possibleCells.size()));
+
+        int col = randomCell.charAt(0) - 'A';
+        int row = randomCell.charAt(1) - '1';
+
+        ContainerElement pot = null;
+        if (model.getIdPlayer() == 0) {
+            pot = gameStage.getWhitePot();
+        } else {
+            pot = gameStage.getBlackPot();
+        }
+
+        int pawnIndex = 0;
+        while (pot.isEmptyAt(pawnIndex, 0)) {
+            pawnIndex++;
+        }
+        Pawn pawn = (Pawn) pot.getElement(pawnIndex, 0);
+
+        System.out.println("Computer places marble in " + randomCell);
+        actionPlace = ActionFactory.generatePutInContainer(model, pawn, "Orbitoboard", row, col);
+
+        ActionList actions = new ActionList();
+
+        if (actionMove != null) {
+            actions.addAll(actionMove);
+        }
+        actions.addAll(actionPlace);
+        actions.setDoEndOfTurn(true); // after playing this action list, it will be the end of turn for current player.
         return actions;
     }
 
-    public ActionList decideGreedy() {
-        ActionList actions = null;
-        OrbitoStageModel stage = (OrbitoStageModel) model.getGameStage();
-        OrbitoBoard board = stage.getBoard();
-        OrbitoMarblePot pot = (model.getIdPlayer() == Pawn.PAWN_BLACK) ? stage.getBlackPot() : stage.getWhitePot();
-        GameElement bestPawn = null;
-        int bestRow = 0, bestCol = 0, maxChoices = -1;
 
-        for (int i = 0; i < 8; i++) {
-            Pawn p = (Pawn) pot.getElement(i, 0);
-            if (p != null) {
-                List<Point> valid = board.computeValidCells(p.getNumber(), 0);
-                if (valid.size() > maxChoices) {
-                    maxChoices = valid.size();
-                    if (!valid.isEmpty()) {
-                        bestPawn = p;
-                        bestRow = valid.get(0).y;
-                        bestCol = valid.get(0).x;
-                    }
-                }
-            }
-        }
-        if (bestPawn == null) throw new IllegalStateException("Aucun coup possible");
-        actions = ActionFactory.generatePutInContainer(model, bestPawn, "orbitoboard", bestRow, bestCol);
-        actions.setDoEndOfTurn(true);
-        return actions;
-    }
-
-    public void decideBestMove(Pawn[][] board, int depth) {
-
-        
+    public ActionList decideBestMove() {
+        return null;
     }
 
     private ArrayList<String> getValidMarbleMoves(Pawn[][] board, int playerID) {
@@ -138,24 +142,24 @@ public class OrbitoDecider extends Decider {
 
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
-                String cell = Character.toString(65 + row) + (col + 1);
+                String cell = Character.toString(65 + col) + (row + 1);
                 Pawn pawn = board[row][col];
                 if (pawn != null && pawn.getColor() != playerID) {
                     //check if we can move the pawn up, down, left, or right
                     if (row > 0 && board[row - 1][col] == null) {
-                        validMoves.add(cell + Character.toString(65 + row - 1) + (col + 1));
+                        validMoves.add(cell + Character.toString(65 + col) + (row));
                     }
 
                     if (row < size - 1 && board[row + 1][col] == null) {
-                        validMoves.add(cell + Character.toString(65 + row + 1) + (col + 1));
+                        validMoves.add(cell + Character.toString(65 + col) + (row + 2));
                     }
 
                     if (col > 0 && board[row][col - 1] == null) {
-                        validMoves.add(cell + Character.toString(65 + row) + col);
+                        validMoves.add(cell + Character.toString(65 + col - 1) + (row + 1));
                     }
 
                     if (col < size - 1 && board[row][col + 1] == null) {
-                        validMoves.add(cell + Character.toString(65 + row) + (col + 2));
+                        validMoves.add(cell + Character.toString(65 + col + 1) + (row + 1));
                     }
                 }
             }
@@ -170,7 +174,7 @@ public class OrbitoDecider extends Decider {
 
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
-                String cell = Character.toString(65 + row) + (col + 1);
+                String cell = Character.toString(65 + col) + (row + 1);
                 Pawn pawn = board[row][col];
                 if (pawn == null) {
                     validCells.add(cell);
@@ -181,23 +185,21 @@ public class OrbitoDecider extends Decider {
         return validCells;
     }
 
-    private Pawn[][] rotateBoard(Pawn[][] board) {
+    private void rotateBoard(Pawn[][] board) {
         OrbitoStageModel gameStage = (OrbitoStageModel) model.getGameStage();
         boolean[] rotation = gameStage.getRotation();
 
         for (int i = 0; i < rotation.length; i++) {
             if (rotation[i]) {
-                board = rotateRingClockwise(i, board);
+                rotateRingClockwise(i, board);
             } else {
-                board = rotateRingCounterClockwise(i, board);
+                rotateRingCounterClockwise(i, board);
             }
         }
-
-        return board;
     }
 
-    private Pawn[][] rotateRingClockwise(int ring_index, Pawn[][] board) {
-        int size = board.length - 1; // Assuming square board, so rows == cols
+    private void rotateRingClockwise(int ring_index, Pawn[][] board) {
+        int size = board.length - 1;
 
         List<Pawn> topList = new ArrayList<>();
         List<Pawn> leftList = new ArrayList<>();
@@ -245,11 +247,9 @@ public class OrbitoDecider extends Decider {
             Pawn bottomPawn = bottomList.get(counter);
             board[size - ring_index][i] = bottomPawn;
         }
-
-        return board;
     }
 
-    private Pawn[][] rotateRingCounterClockwise(int ring_index, Pawn[][] board) {
+    private void rotateRingCounterClockwise(int ring_index, Pawn[][] board) {
         int size = board.length - 1; // Assuming square board, so rows == cols
 
         List<Pawn> topList = new ArrayList<>();
@@ -298,7 +298,39 @@ public class OrbitoDecider extends Decider {
             Pawn bottomPawn = bottomList.get(counter);
             board[size - ring_index][i + 1] = bottomPawn;
         }
+    }
 
-        return board;
+    private void moveMarble(Pawn[][] board, String cell, boolean undo) {
+        String cellSrc, cellDest;
+
+        if (undo) {
+            cellSrc = cell.substring(2);
+            cellDest = cell.substring(0, 2);
+        } else {
+            cellSrc = cell.substring(0, 2);
+            cellDest = cell.substring(2);
+        }
+
+        int colSrc = cellSrc.charAt(0) - 'A';
+        int rowSrc = cellSrc.charAt(1) - '1';
+        int colDest = cellDest.charAt(0) - 'A';
+        int rowDest = cellDest.charAt(1) - '1';
+
+        Pawn pawn = board[rowSrc][colSrc];
+        board[rowSrc][colSrc] = null;
+        board[rowDest][colDest] = pawn;
+    }
+
+    private void placeMarble(Pawn[][] board, String cell, int playerID, boolean undo) {
+        Pawn pawn = new Pawn(1, playerID, model.getGameStage());
+
+        int row = cell.charAt(0) - 'A';
+        int col = cell.charAt(1) - '1';
+
+        if (undo) {
+            board[row][col] = null;
+        } else {
+            board[row][col] = pawn;
+        }
     }
 }

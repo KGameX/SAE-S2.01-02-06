@@ -27,12 +27,14 @@ public class OrbitoController extends Controller {
     boolean firstPlayer;
     int computerMode;
     boolean[] rotation;
+    int nbr_align;
 
-    public OrbitoController(Model model, View view, int computerMode, boolean[] rotation) {
+    public OrbitoController(Model model, View view, int computerMode, boolean[] rotation, int nbr_align) {
         super(model, view);
         firstPlayer = true;
         this.computerMode = computerMode;
         this.rotation = rotation;
+        this.nbr_align = nbr_align;
     }
 
     /**
@@ -44,6 +46,7 @@ public class OrbitoController extends Controller {
         consoleIn = new BufferedReader(new InputStreamReader(System.in));
         OrbitoStageModel stageModel = (OrbitoStageModel) model.getGameStage();
         stageModel.setRotation(rotation);
+        stageModel.setNbr_align(nbr_align);
         update();
         while(! model.isEndStage()) {
             playTurn();
