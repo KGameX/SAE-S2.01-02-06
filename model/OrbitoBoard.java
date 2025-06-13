@@ -63,7 +63,7 @@ public class OrbitoBoard extends ContainerElement {
             return lst;
         }
         //bas droit
-        if (x==this.GetNbrCol()-1 &&  y==this.GetNbrRow()-1) {
+        if (x==this.GetNbrCol() &&  y==this.GetNbrRow()) {
             if (isEmptyAt(x-1,y)){
                 lst.add(new Point(x-1,y));
             }
@@ -75,7 +75,7 @@ public class OrbitoBoard extends ContainerElement {
             }
         }
         //haut droit
-        else if (x==this.GetNbrCol()-1 &&  y==0){
+        else if (x==this.GetNbrCol() &&  y==0){
             if (isEmptyAt(x-1,y)){
                 lst.add(new Point(x-1,y));
             }
@@ -87,7 +87,7 @@ public class OrbitoBoard extends ContainerElement {
             }
         }
         // bas gauche
-        else if (x==0 && y==this.GetNbrRow()-1){
+        else if (x==0 && y==this.GetNbrRow()){
             if (isEmptyAt(x,y-1)){
                 lst.add(new Point(x,y-1));
             }
@@ -109,7 +109,7 @@ public class OrbitoBoard extends ContainerElement {
                 lst.add(new Point(x+1,y));
             }
         }
-        else if (x==GetNbrRow()-1){
+        else if (x==GetNbrRow()){
             if (isEmptyAt(x-1,y)){
                 lst.add(new Point(x-1,y));
             }
@@ -126,7 +126,7 @@ public class OrbitoBoard extends ContainerElement {
                 lst.add(new Point(x,y-1));
             }
         }
-        else if  (y==GetNbrCol()-1){
+        else if  (y==GetNbrCol()){
             if (isEmptyAt(x+1,y)){
                 lst.add(new Point(x+1,y));
             }
