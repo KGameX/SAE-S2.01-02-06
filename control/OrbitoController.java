@@ -23,18 +23,19 @@ import java.util.*;
 
 public class OrbitoController extends Controller {
 
-    BufferedReader consoleIn;
+    Scanner consoleIn;
     boolean firstPlayer;
     int computerMode;
     boolean[] rotation;
     int nbr_align;
 
-    public OrbitoController(Model model, View view, int computerMode, boolean[] rotation, int nbr_align) {
+    public OrbitoController(Model model, View view, int computerMode, boolean[] rotation, int nbr_align, Scanner scanner) {
         super(model, view);
         firstPlayer = true;
         this.computerMode = computerMode;
         this.rotation = rotation;
         this.nbr_align = nbr_align;
+        this.consoleIn = scanner;
     }
 
     /**
@@ -43,7 +44,7 @@ public class OrbitoController extends Controller {
      * It is pretty straight forward to write :
      */
     public void stageLoop() {
-        consoleIn = new BufferedReader(new InputStreamReader(System.in));
+        //consoleIn = new Scanner(System.in);
         OrbitoStageModel stageModel = (OrbitoStageModel) model.getGameStage();
         stageModel.setRotation(rotation);
         stageModel.setNbr_align(nbr_align);
@@ -73,31 +74,27 @@ public class OrbitoController extends Controller {
             } else {
                 System.out.println("It's your turn.\nDo you want to move an opponent's marble ?");
                 String ans = "x";
-                try {
-                    while (!"YyNn".contains(ans)) {
-                        ans = "N";
-                        System.out.print(p.getName() + " (y/N) > ");
-                        ans = consoleIn.readLine();
-                        if (ans.length() > 1) {
-                            ans = "x";
-                        }
+                while (!"YyNn".contains(ans)) {
+                    ans = "N";
+                    System.out.print(p.getName() + " (y/N) > ");
+                    ans = consoleIn.next();
+                    if (ans.length() > 1) {
+                        ans = "x";
                     }
-                } catch (IOException e) {/*Something went wrong ?*/}
+                }
 
                 if ((ans.equals("Y")) || (ans.equals("y"))) {
                     System.out.println("Enter the coordinates of the marble you want to move, and the destination cell.");
                     while (!ok) {
                         System.out.print(p.getName() + " > ");
-                        try {
-                            String line = consoleIn.readLine();
-                            if (line.length() == 4) {
-                                ok = moveMarble(line);
-                            }
+                        String line = consoleIn.next();
+                        if (line.length() == 4) {
+                            ok = moveMarble(line);
+                        }
 
-                            if (!ok) {
-                                System.out.println("Incorrect move, coordinates or already occupied cell. retry !");
-                            }
-                        } catch (IOException e) {/*Something went wrong ?*/}
+                        if (!ok) {
+                            System.out.println("Incorrect move, coordinates or already occupied cell. retry !");
+                        }
                     }
                     update();
                 }
@@ -108,16 +105,14 @@ public class OrbitoController extends Controller {
             System.out.println("Place a marble in the space of your choice.");
             while (!ok) {
                 System.out.print(p.getName()+ " > ");
-                try {
-                    String line = consoleIn.readLine();
-                    if (line.length() == 2) {
-                        ok = analyseAndPlay(line);
-                    }
+                String line = consoleIn.next();
+                if (line.length() == 2) {
+                    ok = analyseAndPlay(line);
+                }
 
-                    if (!ok) {
-                        System.out.println("Incorrect coordinates or already occupied cell. retry !");
-                    }
-                } catch (IOException e) {/*Something went wrong ?*/}
+                if (!ok) {
+                    System.out.println("Incorrect coordinates or already occupied cell. retry !");
+                }
             }
         }
     }

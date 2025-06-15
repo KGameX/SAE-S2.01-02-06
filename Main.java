@@ -138,7 +138,7 @@ public class Main {
 
         StageFactory.registerModelAndView("orbito++", "model.OrbitoStageModel", "view.OrbitoStageView");
         View orbitoView = new View(model);
-        OrbitoController control = new OrbitoController(model, orbitoView, computerMode, rotation, nbr_aligner);
+        OrbitoController control = new OrbitoController(model, orbitoView, computerMode, rotation, nbr_aligner, scanner);
         control.setFirstStageName("orbito++");
         try {
             control.startGame();

@@ -98,8 +98,8 @@ public class OrbitoDecider extends Decider {
         }
 
         List<String> possibleCells = getValidCells(board);
-
         System.out.println(possibleCells);
+
         String randomCell = possibleCells.get((int) (Math.random() * possibleCells.size()));
 
         int col = randomCell.charAt(0) - 'A';
