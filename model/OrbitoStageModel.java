@@ -197,7 +197,7 @@ public class OrbitoStageModel extends GameStageModel {
         boolean whiteWin = check_align(Pawn.PAWN_WHITE);
 
         if (blackWin && whiteWin) {
-            model.setIdWinner(idWinner);
+            model.setIdWinner(2);
             model.stopStage();
         } else {
             if (blackWin) {
@@ -212,7 +212,6 @@ public class OrbitoStageModel extends GameStageModel {
         }
 
         if (blackPawnsToPlay == 0 && whitePawnsToPlay == 0) {
-            model.setIdWinner(idWinner);
             model.stopStage();
         }
     }

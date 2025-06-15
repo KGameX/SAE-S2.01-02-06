@@ -106,12 +106,12 @@ public class Main {
 
         int nbr_aligner = 4;
         if (taille == 6) {
-            System.out.println("How many marbles need to be aligned to win ? (4 or 6)");
+            System.out.println("How many marbles need to be aligned to win ? (4, 5 or 6)");
             System.out.print("> ");
 
             try {
                 int choix = scanner.nextInt();
-                if (choix == 4 || choix == 6) {
+                if (choix == 4 || choix == 5 || choix == 6) {
                     nbr_aligner = choix;
                 } else {
                     System.out.println("Invalid choice, defaulting to 4 marbles.");

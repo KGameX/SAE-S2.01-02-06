@@ -34,7 +34,7 @@ public class OrbitoDecider extends Decider {
         if (computerMode == 0) {
             return decideRandom();
         } else if (computerMode == 1) {
-            return decideBestMove();
+            //return decideBestMove();
         }
 
         long executionTime = Profiler.timestamp() - startTime;
@@ -74,7 +74,6 @@ public class OrbitoDecider extends Decider {
         }
 
         List<String> possibleMoves = getValidMarbleMoves(board, model.getIdPlayer());
-        System.out.println(possibleMoves);
 
         ActionList actionMove = null;
         ActionList actionPlace;
@@ -98,7 +97,6 @@ public class OrbitoDecider extends Decider {
         }
 
         List<String> possibleCells = getValidCells(board);
-        System.out.println(possibleCells);
 
         String randomCell = possibleCells.get((int) (Math.random() * possibleCells.size()));
 
@@ -129,11 +127,6 @@ public class OrbitoDecider extends Decider {
         actions.addAll(actionPlace);
         actions.setDoEndOfTurn(true); // after playing this action list, it will be the end of turn for current player.
         return actions;
-    }
-
-
-    public ActionList decideBestMove() {
-        return null;
     }
 
     private ArrayList<String> getValidMarbleMoves(Pawn[][] board, int playerID) {
@@ -185,15 +178,25 @@ public class OrbitoDecider extends Decider {
         return validCells;
     }
 
-    private void rotateBoard(Pawn[][] board) {
+    private void rotateBoard(Pawn[][] board, boolean undo) {
         OrbitoStageModel gameStage = (OrbitoStageModel) model.getGameStage();
         boolean[] rotation = gameStage.getRotation();
 
-        for (int i = 0; i < rotation.length; i++) {
-            if (rotation[i]) {
-                rotateRingClockwise(i, board);
-            } else {
-                rotateRingCounterClockwise(i, board);
+        if (!undo) {
+            for (int i = 0; i < rotation.length; i++) {
+                if (rotation[i]) {
+                    rotateRingClockwise(i, board);
+                } else {
+                    rotateRingCounterClockwise(i, board);
+                }
+            }
+        } else {
+            for (int i = 0; i < rotation.length; i++) {
+                if (rotation[i]) {
+                    rotateRingCounterClockwise(i, board);
+                } else {
+                    rotateRingClockwise(i, board);
+                }
             }
         }
     }
@@ -322,7 +325,15 @@ public class OrbitoDecider extends Decider {
     }
 
     private void placeMarble(Pawn[][] board, String cell, int playerID, boolean undo) {
-        Pawn pawn = new Pawn(1, playerID, model.getGameStage());
+        OrbitoStageModel gameStage = (OrbitoStageModel) model.getGameStage();
+
+        OrbitoMarblePot pot = (model.getIdPlayer() == Pawn.PAWN_BLACK) ? gameStage.getBlackPot() : gameStage.getWhitePot();
+
+        int pawnIndex = 0;
+        while (pot.isEmptyAt(pawnIndex, 0)) {
+            pawnIndex++;
+        }
+        Pawn pawn = (Pawn) pot.getElement(pawnIndex, 0);
 
         int row = cell.charAt(0) - 'A';
         int col = cell.charAt(1) - '1';

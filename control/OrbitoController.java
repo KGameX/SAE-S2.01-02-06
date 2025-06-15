@@ -56,6 +56,21 @@ public class OrbitoController extends Controller {
             stageModel.computePartyResult();
             update();
         }
+
+        int attempts = 0;
+
+        while (model.getIdWinner() == -1 && attempts < 5) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {/*Something went wrong ?*/}
+            attempts++;
+            rotateBoard();
+            stageModel.computePartyResult();
+            update();
+        }
+
+        if (model.getIdWinner() == 2) model.setIdWinner(-1);
+
         endGame();
     }
 
@@ -271,8 +286,6 @@ public class OrbitoController extends Controller {
         if (board.isElementAt(rowDest, colDest)) return false;
 
         int playerID = model.getIdPlayer();
-        System.out.println(playerID);
-        System.out.println(pawn.getColor());
         if (playerID == pawn.getColor()) return false;
 
         // Checks if the move is legal by calculating the length between the two cells.
@@ -298,12 +311,7 @@ public class OrbitoController extends Controller {
         if ((row < 0) || (row > nbr_rows - 1)) return false;
         if ((col < 0) || (col > nbr_cols - 1)) return false;
 
-        ContainerElement pot = null;
-        if (model.getIdPlayer() == 0) {
-            pot = gameStage.getWhitePot();
-        } else {
-            pot = gameStage.getBlackPot();
-        }
+        OrbitoMarblePot pot = (model.getIdPlayer() == Pawn.PAWN_BLACK) ? gameStage.getBlackPot() : gameStage.getWhitePot();
 
         if (board.isElementAt(row, col)) return false;
 
